@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles_log.css' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+
+<body>
+    <header>
+        <h1>Bienvenido a</h1>
+        <p>Por favor, inicia sesión para acceder a tu cuenta.</p>
+        <a class="exit" href="{% url 'home' %}">Salir</a>
+    </header>
+
+    <div class="container">
+        <form class="form" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Login">
+        </form>
+    </div>
+</body>
+
+</html>

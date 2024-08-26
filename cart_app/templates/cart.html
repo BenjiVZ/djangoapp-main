@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+</head>
+<body>
+    <header>
+        <a class="exit" href="{% url 'home' %}">Salir</a>
+    </header>
+    
+    <main>
+        <section class="cart-items">
+            <!--
+            {% for item in cart_items %}
+            <div class="cart-item">
+                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                <div class="item-details">
+                    <h2>{{ item.product.name }}</h2>
+                    <p>Price: ${{ item.product.price }}</p>
+                    <p>Quantity: {{ item.quantity }}</p>
+                </div>
+                <button class="remove-item">Remove</button>
+            </div>
+            {% endfor %}
+            -->
+        </section>
+        <section class="cart-summary">
+            <h2>Summary</h2>
+            <p>Total Items: {{ total_items }}</p>
+            <p>Total Price: ${{ total_price }}</p>
+            <button class="checkout">Proceed to Checkout</button>
+        </section>
+    </main>
+
+    <footer>
+        Footer
+    </footer>
+</body>
+</html>
