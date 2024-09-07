@@ -4,6 +4,7 @@ from myapp.models import Producto
 
 # Create your views here.
 
+#vista de losproductos populares y en tendencia
 def home(request):
     productos_tendencia = Producto.objects.filter(tendencia=True)
     productos_populares = Producto.objects.filter(popular=True)
@@ -11,7 +12,7 @@ def home(request):
         'tendencia': productos_tendencia,
         'populares': productos_populares
     }
-    return render(request, 'home.html')
+    return render(request, 'home.html', data)
 
 from django.contrib.auth.decorators import login_required
 

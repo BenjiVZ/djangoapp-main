@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalog</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles_catalog.css' %}">
+</head>
+<body>
+    <header>
+        <a class="exit" href="{% url 'home' %}">Salir</a>
+    </header>
+
+    <main>
+        <section class="sec1">
+            <h2>Catálogo de Productos</h2>
+        </section>
+
+        <section class="sec2">
+            {% for p in productos %}
+            <div class="producto">
+                {% if p.imagen %}
+                <img src="{{ p.imagen.url }}" alt="{{ p.nombre }}">
+                {% endif %}
+                <h3>{{ p.marca.nombre | capfirst }}</h3>
+                <h2>{{ p.nombre | title }}</h2>
+            </div>
+            {% endfor %}
+        </section>
+    </main>
+
+    <footer>
+        Footer
+    </footer>
+</body>
+</html>

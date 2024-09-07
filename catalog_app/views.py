@@ -9,4 +9,8 @@ def catalog(request):
     data = {
         'productos': productos
     }
-    return render(request, "catalogue.html", data)
+    return render(request, "catalog.html", data)
+
+def catalogue(request):
+    productos = Producto.objects.all()
+    return render(request, 'catalogue.html', {'productos': productos})

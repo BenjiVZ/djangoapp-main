@@ -1,20 +1,22 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cart</title>
 </head>
+
 <body>
     <header>
         <a class="exit" href="{% url 'home' %}">Salir</a>
     </header>
-    
+
     <main>
-        <section class="cart-items">
-            <!--
+        <!-- <section class="cart-items">
+            
             {% for item in cart_items %}
             <div class="cart-item">
                 <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
@@ -26,18 +28,48 @@
                 <button class="remove-item">Remove</button>
             </div>
             {% endfor %}
-            -->
+        
         </section>
         <section class="cart-summary">
             <h2>Summary</h2>
             <p>Total Items: {{ total_items }}</p>
             <p>Total Price: ${{ total_price }}</p>
             <button class="checkout">Proceed to Checkout</button>
-        </section>
+        </section> -->
+
+        <h1>Carrito de Compras</h1>
+        {% if items %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
+                    <th>Precio Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.producto.nombre }}</td>
+                    <td>{{ item.cantidad }}</td>
+                    <td>${{ item.producto.precio }}</td>
+                    <td>${{ item.get_total_item_price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p>Total: ${{ total }}</p>
+        <a href="{% url 'generar_factura' %}">Generar Factura</a>
+        {% else %}
+        <p>Tu carrito está vacío.</p>
+        {% endif %}
+
     </main>
 
     <footer>
         Footer
     </footer>
 </body>
+
 </html>
