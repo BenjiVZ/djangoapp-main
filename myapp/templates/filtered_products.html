@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda de Productos</title>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: #111;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.3);
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 36px;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 2px solid #fff;
+            padding-bottom: 10px;
+        }
+
+        form {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background-color: #222;
+            color: #fff;
+        }
+
+        input[type="text"]::placeholder {
+            color: #aaa;
+        }
+
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #f00;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #c00;
+        }
+
+        h2 {
+            color: #fff;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #222;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 4px;
+            transition: transform 0.3s ease;
+        }
+
+        li:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.3);
+        }
+
+        h3 {
+            margin: 0 0 10px 0;
+            color: #fff;
+        }
+
+        p {
+            color: #ccc;
+            margin: 5px 0;
+        }
+
+        p strong {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Búsqueda de Productos</h1>
+        <form action="{% url 'filter_products' %}" method="get">
+            <input type="text" name="category" placeholder="Introduce tu búsqueda aquí" value="{{ category }}">
+            <input type="submit" value="Buscar">
+        </form>
+
+        {% if products %}
+            <h2>Resultados para: {{ category }}</h2>
+            <ul>
+                {% for product in products %}
+                <li>
+                    <h3>{{ product.name }}</h3>
+                    <p>{{ product.description }}</p>
+                    <p><strong>Precio:</strong> ${{ product.price }}</p>
+                </li>
+                {% endfor %}
+            </ul>
+        {% elif category %}
+            <p>No se encontraron productos para esta categoría.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -4,42 +4,23 @@
 
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cart</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>Carrito de Compras</title>
 </head>
 
 <body>
-    <header>
-        <a class="exit" href="{% url 'home' %}">Salir</a>
+    <header class="header">
+        <div class="wrap">
+            <button class="button"><a href="{% url 'home' %}" class="button2 b-blue rot-135">Salir</a></button>
+        </div>
     </header>
 
-    <main>
-        <!-- <section class="cart-items">
-            
-            {% for item in cart_items %}
-            <div class="cart-item">
-                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
-                <div class="item-details">
-                    <h2>{{ item.product.name }}</h2>
-                    <p>Price: ${{ item.product.price }}</p>
-                    <p>Quantity: {{ item.quantity }}</p>
-                </div>
-                <button class="remove-item">Remove</button>
-            </div>
-            {% endfor %}
-        
-        </section>
-        <section class="cart-summary">
-            <h2>Summary</h2>
-            <p>Total Items: {{ total_items }}</p>
-            <p>Total Price: ${{ total_price }}</p>
-            <button class="checkout">Proceed to Checkout</button>
-        </section> -->
-
+    <main class="main">
         <h1>Carrito de Compras</h1>
+
         {% if items %}
-        <table>
+        <table class="cart-table">
             <thead>
                 <tr>
                     <th>Producto</th>
@@ -59,16 +40,19 @@
                 {% endfor %}
             </tbody>
         </table>
-        <p>Total: ${{ total }}</p>
-        <a href="{% url 'generar_factura' %}">Generar Factura</a>
+
+        <div class="cart-summary">
+            <p>Total: ${{ total }}</p>
+            <a class="btn checkout" href="{% url 'generar_factura' %}">Generar Factura</a>
+        </div>
         {% else %}
         <p>Tu carrito está vacío.</p>
         {% endif %}
 
     </main>
 
-    <footer>
-        Footer
+    <footer class="footer">
+        <p>&copy; 2024 Tu Empresa. Todos los derechos reservados.</p>
     </footer>
 </body>
 

@@ -1,25 +1,58 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catalog</title>
+    <link rel="stylesheet" href="{% static 'css/styles_catalogue.css' %}">
+    <title>Catálogo de Productos</title>
 </head>
 
 <body>
-    <h1>Catálogo de Productos</h1>
-    <div>
-        {% for producto in productos %}
-        <div>
-            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
-            <h2>{{ producto.nombre }}</h2>
-            <p>{{ producto.descripcion }}</p>
-            <p>Precio: ${{ producto.precio }}</p>
-            <a href="{% url 'agregar_al_carrito' producto.id %}">Agregar al Carrito</a>
+    <nav>
+    </nav>
+    <header class="header">
+        <div class="wrap">
+            <button class="button"><a href="{% url 'home' %}" class="button2 b-blue rot-135">Salir</a></button>
         </div>
-        {% endfor %}
-    </div>
+    </header>
+
+    <h1>Catálogo de Productos</h1>
+
+    <main class="main">
+        <div class="product-list">
+            {% for producto in productos %}
+            <div class="product-item">
+                <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                <h2>{{ producto.nombre }}</h2>
+                <p>{{ producto.descripcion }}</p>
+                <p class="price">Precio: ${{ producto.precio }}</p>
+                <button class="bubbly-button"><a href="{% url 'agregar_al_carrito' producto.id %}">Agregar al
+                        Carrito</a></button>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+    <script>
+        var animateButton = function (e) {
+
+            e.preventDefault;
+            //reset animation
+            e.target.classList.remove('animate');
+
+            e.target.classList.add('animate');
+            setTimeout(function () {
+                e.target.classList.remove('animate');
+            }, 700);
+        };
+
+        var bubblyButtons = document.getElementsByClassName("bubbly-button");
+
+        for (var i = 0; i < bubblyButtons.length; i++) {
+            bubblyButtons[i].addEventListener('click', animateButton, false);
+        }
+    </script>
 </body>
 
 </html>

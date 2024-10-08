@@ -1,77 +1,223 @@
-/* General Styles */
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f5f5f5;
-    color: #333;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700');
+
+:root {
+    --baseColor: #606468;
+    --bodyBackgroundColor: #2c3338;
+    --bodyColor: var(--baseColor);
+    --bodyFontFamily: "Open Sans", sans-serif;
+    --bodyFontSize: 0.875rem;
+    --bodyFontWeight: 400;
+    --bodyLineHeight: 1.5;
+    --formBorderRadius: 0.25rem;
+    --formColor: #eee;
+    --formInputBackgroundColor: #3b4148;
+    --formInputHoverBackgroundColor: #434a52;
+    --formSubmitBackgroundColor: #ea4c88;
+    --formSubmitColor: #eee;
+    --formSubmitHoverBackgroundColor: #d44179;
 }
 
-header {
+nav {
+    float: right;
+    font-size: 80%;
+}
+
+.b-blue, .b-blue:before {
+    background: rgba(5,118,255,1);
+    background: -moz-linear-gradient(45deg, rgba(5,118,255,1) 0%, rgba(36,248,255,1) 100%);
+    background: -webkit-gradient(left bottom, right top, color-stop(0%, rgba(5,118,255,1)), color-stop(100%, rgba(36,248,255,1)));
+    background: -webkit-linear-gradient(45deg, rgba(5,118,255,1) 0%, rgba(36,248,255,1) 100%);
+    background: -o-linear-gradient(45deg, rgba(5,118,255,1) 0%, rgba(36,248,255,1) 100%);
+    background: -ms-linear-gradient(45deg, rgba(5,118,255,1) 0%, rgba(36,248,255,1) 100%);
+    background: linear-gradient(45deg, rgba(5,118,255,1) 0%, rgba(36,248,255,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0576ff', endColorstr='#24f8ff', GradientType=1 );
+  }
+/*END GRADIENTS*/
+/*BASE BUTTON*/
+.button {
+  display: inline-block;
+  position: relative;
+  border-radius: 3px;
+  text-decoration: none;
+  padding: .5em;
+  margin: .5em;
+  font-size: 2em;
+  font-weight: bold;
+  transition: all .5s;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.button:hover {
+  text-shadow: 0px 0px 0px rgba(255, 255, 255, .75);
+}
+.button:hover:after {
+  left: 100%;
+  top: 100%;
+  bottom: 100%;
+  right: 100%;
+}
+.button:before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: -1;
+  border-radius: 5px;
+  transition: all .5s;
+}
+.button:after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  bottom: 2px;
+  right: 2px;
+  z-index: -1;
+  border-radius: 5px;
+  transition: all .5s;
+}
+.button2 {
+  display: inline-block;
+  font-size: 2em;
+  margin: .5em;
+  padding: .5em;
+  border-radius: 5px;
+  transition: all .5s;
+  filter: hue-rotate(0deg);
+  color: #FFF;
+  text-decoration: none;
+}
+/*END BASE BUTTON*/
+/*ROTATE*/
+.rot-360-noscoop:hover {
+  filter: hue-rotate(360deg);
+  transform: rotate(360deg);
+}
+.rot-135:hover {
+  filter: hue-rotate(135deg);
+}
+.rot-90:hover {
+  filter: hue-rotate(90deg);
+}
+/*END ROTATE*/
+
+body {
+    background-color: var(--bodyBackgroundColor);
+    color: var(--bodyColor);
+    font-family: var(--bodyFontFamily);
+    font-size: var(--bodyFontSize);
+    font-weight: var(--bodyFontWeight);
+    line-height: var(--bodyLineHeight);
+    margin: 0;
+    min-height: 100vh;
+}
+
+.align {
+    display: f;
+    place-items: center;
+}
+
+.grid {
+    inline-size: 90%;
+    margin-inline: auto;
+    max-inline-size: 20rem;
+}
+
+.header {
     text-align: center;
     margin-bottom: 2rem;
 }
 
-header h1 {
-    color: #2196F3;
-    font-size: 2.5rem;
+.header h1,
+.header p {
+    color: var(--formColor);
 }
 
-header p {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-}
-
-header .exit {
+.exit {
     display: inline-block;
     margin-top: 1rem;
     padding: 0.5rem 1rem;
-    background-color: #2196F3;
-    color: white;
+    background-color: var(--formSubmitBackgroundColor);
+    color: var(--formSubmitColor);
+    border-radius: var(--formBorderRadius);
     text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
 }
 
-header .exit:hover {
-    background-color: #1976D2;
+.exit:hover {
+    background-color: var(--formSubmitHoverBackgroundColor);
 }
 
-.container {
-    background-color: white;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    width: 90%;
-    max-width: 400px;
-}
-
-.form {
-    display: flex;
-    flex-direction: column;
-}
-
-.form input[type="submit"] {
-    background-color: #2196F3;
-    color: white;
-    padding: 0.75rem;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 1rem;
-}
-
-.form input[type="submit"]:hover {
-    background-color: #1976D2;
+form {
+    display: grid;
+    gap: 0.875rem;
 }
 
 form p {
-    margin-bottom: 1rem;
+    margin: 0;
+}
+
+form label {
+    color: var(--formColor);
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+form input[type="text"],
+form input[type="password"],
+form input[type="email"] {
+    background-color: var(--formInputBackgroundColor);
+    border: none;
+    border-radius: var(--formBorderRadius);
+    color: var(--formColor);
+    font: inherit;
+    padding: 0.75rem;
+    width: 100%;
+}
+
+form input[type="text"]:focus,
+form input[type="password"]:focus,
+form input[type="email"]:focus {
+    background-color: var(--formInputHoverBackgroundColor);
+}
+
+.submit-btn {
+    background-color: var(--formSubmitBackgroundColor);
+    border: none;
+    border-radius: var(--formBorderRadius);
+    color: var(--formSubmitColor);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+    padding: 0.75rem;
+    text-transform: uppercase;
+    width: 100%;
+}
+
+.submit-btn:focus,
+.submit-btn:hover {
+    background-color: var(--formSubmitHoverBackgroundColor);
+}
+
+.text--center {
+    text-align: center;
+}
+
+.text--center a {
+    color: var(--formColor);
+}
+
+/* Estilos para los mensajes de error del formulario */
+.errorlist {
+    color: #ff6b6b;
+    list-style-type: none;
+    padding: 0;
+    margin: 0.25rem 0;
+}
+
+.errorlist li {
+    font-size: 0.8rem;
 }

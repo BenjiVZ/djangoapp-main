@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from myapp.views import home
+from myapp.views import home, filter_products, chat_with_rasa, chat_page
 from user_app.views import log, reg
 from django.contrib.auth.views import LoginView, LogoutView
 from catalog_app.views import catalog, catalogue
@@ -29,6 +29,9 @@ from user_app.views import CustomLogoutView """
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/', home, name='home'),
+    path('chat/', chat_with_rasa, name='chat_with_rasa'),
+    path('', chat_page, name='chat_page'),
+    path('filter/', filter_products, name='filter_products'),
     path('register/', reg, name='regs'),
     path('login/', LoginView.as_view(template_name='login.html'), name='logs'),
     path('logout/', LogoutView.as_view(), name='logout'),

@@ -4,82 +4,153 @@
 
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/styles_home.css' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>home</title>
+    <title>Home - Cosmeticos</title>
+    <link rel="stylesheet" href="{% static 'css/styles_home.css' %}">
 </head>
 
 <body>
-    <header>
-        <h1>Welcome to my website</h1>
+    <header class="header">
+        <h1>Bienvenidos a nuestra tienda de cosméticos</h1>
     </header>
-    <section class="section_header">
-        {% if messages %}
-        {% for message in messages %}
-        <div class="message">
-            {{ message }}
-        </div>
-        {% endfor %}
-        {% endif %}
-    </section>
-    <nav>
+
+    <nav class="nav">
         {% if not request.user.is_authenticated %}
-            <a href="{% url 'logs' %}">Login</a>
-            <a href="{% url 'regs' %}">Register</a>
-            <a href="{% url 'catalog' %}">Catalogue</a>
+        <button class="btn-hover color-7"><a href="{% url 'logs' %}" class="button-link">Login</a></button>
+        <button class="btn-hover color-7"><a href="{% url 'regs' %}" class="button-link">Register</a></button>
+        <button class="btn-hover color-7"><a href="{% url 'catalog' %}" class="button-link">Catalogue</a></button>
         {% elif request.user.profile.role == 'admin' %}
-            <a href="{% url 'logst' %}">Logout</a>
-            <a href="{% url 'catalog' %}">Catalogue</a>
-            <a href="{% url 'catalogue' %}">Cataloguesss</a>
-            <a href="{% url 'cart' %}">Cart</a>
-            <a href="{% url 'admin:index' %}">Admin Panel</a>
+        <button class="btn-hover color-3"><a href="{% url 'logst' %}" class="button-link">Logout</a></button>
+        <button class="btn-hover color-3"><a href="{% url 'catalog' %}" class="button-link">Catalogue</a></button>
+        <button class="btn-hover color-3"><a href="{% url 'catalogue' %}" class="button-link">Cataloguesss</a></button>
+        <button class="btn-hover color-3"><a href="{% url 'cart' %}" class="button-link">Carrito</a></button>
+        <button class="btn-hover color-3"><a href="{% url 'admin:index' %}" class="button-link">Admin Panel</a></button>
         {% else %}
-            <form action="{% url 'logout' %}" method="post" style="display:inline;">
+        <form action="{% url 'logout' %}" method="post" style="display:inline;">
             {% csrf_token %}
-            <button type="submit">Logout</button>
-            </form>
-            <a href="{% url 'catalog' %}">Catalogue</a>
-            <a href="{% url 'catalogue' %}">Cataloguesss</a>
-            <a href="{% url 'cart' %}">Cart</a>
+            <button class="btn-hover color-3">Logout</button>
+        </form>
+        <button class="btn-hover color-7"><a href="{% url 'catalog' %}" class="button-link">Catalogue</a></button>
+        <button class="btn-hover color-7"><a href="{% url 'catalogue' %}" class="button-link">Catalogues</a></button>
+        <button class="btn-hover color-7"><a href="{% url 'cart' %}" class="button-link">Carrito</a></button>
         {% endif %}
     </nav>
-    
 
-    <main>
-        <section class="sec1">
-            <h2>Featured Image</h2>
-        </section>
-
-        <section class="sec2">
-            <div id="items">
-                <div id="ofertas">
-                    {% for producto in tendencia %}
-                    <article>
-                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
-                        <h2>{{ producto.nombre }}</h2>
-                    </article>
-                    {% endfor %}
-                </div>
+    <main class="main">
+        <section class="section-products">
+            <h2>Productos en Tendencia</h2>
+            <div class="product-list">
+                {% for producto in tendencia %}
+                <article class="product-item">
+                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                    <h3>{{ producto.nombre }}</h3>
+                </article>
+                {% endfor %}
             </div>
         </section>
 
-        <section class="sec3">
-            <div id="items">
-                <div id="ofertas">
-                    {% for producto in populares %}
-                    <article>
-                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
-                        <h2>{{ producto.nombre }}</h2>
-                    </article>
-                    {% endfor %}
-                </div>
+        <section class="section-products">
+            <h2>Productos Populares</h2>
+            <div class="product-list">
+                {% for producto in populares %}
+                <article class="product-item">
+                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                    <h3>{{ producto.nombre }}</h3>
+                </article>
+                {% endfor %}
             </div>
         </section>
     </main>
 
-    <footer>
-        <h3>Footer</h3>
-    </footer>
+    <footer class="footer">
+        <div class="footer__addr">
+          <h1 class="footer__logo">Something</h1>
+              
+          <h2>Contact</h2>
+          
+          <address>
+            5534 Somewhere In. The World 22193-10212<br>
+                
+            <a class="footer__btn" href="mailto:example@gmail.com">Email Us</a>
+          </address>
+        </div>
+        
+        <ul class="footer__nav">
+          <li class="nav__item">
+            <h2 class="nav__title">Media</h2>
+      
+            <ul class="nav__ul">
+              <li>
+                <a href="#">Online</a>
+              </li>
+      
+              <li>
+                <a href="#">Print</a>
+              </li>
+                  
+              <li>
+                <a href="#">Alternative Ads</a>
+              </li>
+            </ul>
+          </li>
+          
+          <li class="nav__item nav__item--extra">
+            <h2 class="nav__title">Technology</h2>
+            
+            <ul class="nav__ul nav__ul--extra">
+              <li>
+                <a href="#">Hardware Design</a>
+              </li>
+              
+              <li>
+                <a href="#">Software Design</a>
+              </li>
+              
+              <li>
+                <a href="#">Digital Signage</a>
+              </li>
+              
+              <li>
+                <a href="#">Automation</a>
+              </li>
+              
+              <li>
+                <a href="#">Artificial Intelligence</a>
+              </li>
+              
+              <li>
+                <a href="#">IoT</a>
+              </li>
+            </ul>
+          </li>
+          
+          <li class="nav__item">
+            <h2 class="nav__title">Legal</h2>
+            
+            <ul class="nav__ul">
+              <li>
+                <a href="#">Privacy Policy</a>
+              </li>
+              
+              <li>
+                <a href="#">Terms of Use</a>
+              </li>
+              
+              <li>
+                <a href="#">Sitemap</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+        
+        <div class="legal">
+          <p>&copy; 2019 Something. All rights reserved.</p>
+          
+          <div class="legal__links">
+            <span>Made with <span class="heart">♥</span> remotely from Anywhere</span>
+          </div>
+        </div>
+      </footer>
 </body>
 
 </html>

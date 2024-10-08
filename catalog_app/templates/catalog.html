@@ -1,37 +1,42 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catalog</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/styles_catalog.css' %}">
+    <title>Catálogo de Productos</title>
+    <link rel="stylesheet" href="{% static 'css/styles_catalog.css' %}">
 </head>
+
 <body>
-    <header>
-        <a class="exit" href="{% url 'home' %}">Salir</a>
+    <header class="header">
+        <div class="wrap">
+            <button class="button"><a href="{% url 'home' %}" class="button2 b-blue rot-135">Salir</a></button>
+        </div>
     </header>
 
-    <main>
-        <section class="sec1">
+    <main class="main">
+        <section class="catalog-header">
             <h2>Catálogo de Productos</h2>
         </section>
 
-        <section class="sec2">
+        <section class="product-list">
             {% for p in productos %}
-            <div class="producto">
+            <div class="product-item">
                 {% if p.imagen %}
                 <img src="{{ p.imagen.url }}" alt="{{ p.nombre }}">
                 {% endif %}
-                <h3>{{ p.marca.nombre | capfirst }}</h3>
-                <h2>{{ p.nombre | title }}</h2>
+                <h3 class="brand">{{ p.marca.nombre | capfirst }}</h3>
+                <h2 class="product-name">{{ p.nombre | title }}</h2>
             </div>
             {% endfor %}
         </section>
     </main>
 
-    <footer>
-        Footer
+    <footer class="footer">
+        <p>&copy; 2024 Tu Empresa. Todos los derechos reservados.</p>
     </footer>
 </body>
+
 </html>
