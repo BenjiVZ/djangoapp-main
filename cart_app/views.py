@@ -4,6 +4,7 @@ from .models import Carrito, CarritoItem
 from myapp.models import Producto  # Importa el modelo Producto desde la app myapp
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.conf import settings
 
 @login_required
 def agregar_al_carrito(request, producto_id):
@@ -26,6 +27,9 @@ def cart(request):
     """
     Vista para mostrar los productos en el carrito de compras del usuario.
     """
+    data = {
+        'MEDIA_URL': settings.MEDIA_URL,
+    }
     carrito, created = Carrito.objects.get_or_create(usuario=request.user)
     items = carrito.items.all()
     total = sum(item.get_total_item_price() for item in items)

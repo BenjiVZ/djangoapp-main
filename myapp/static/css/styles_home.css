@@ -1,12 +1,13 @@
 /* Estilos generales */
 body {
-    font-family: Arial, sans-serif;
-    color: #fff;
-    background-color: #000;
-    margin: 0;
-    padding: 0;
-}
+  font-family: Arial, sans-serif;
 
+  margin: 0;
+  padding: 0;
+  background-size: cover; /* Ajusta la imagen para cubrir todo el fondo */
+  background-position: center; /* Centra la imagen en el fondo */
+  background-repeat: no-repeat; /* Evita que la imagen se repita */
+}
 
 /* Ajustes generales */
 .buttons {
@@ -118,37 +119,43 @@ h2 {
 
 /* Productos en horizontal */
 .product-list {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    gap: 15px;
-    padding: 10px;
-    justify-content: center;
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 15px;
+  padding: 10px;
+  justify-content: center;
 }
 
 .product-item {
-    background-color: #111;
-    border-radius: 8px;
-    padding: 10px;
-    text-align: center;
-    min-width: 200px;
-    transition: transform 0.3s ease;
+  background-color: #111;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  min-width: 200px;
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .product-item img {
-    max-width: 100%;
-    border-radius: 8px;
-    margin-bottom: 10px;
+  width: 100%;
+  height: 200px; /* Establece una altura fija */
+  object-fit: cover; /* Hace que la imagen se ajuste al contenedor sin distorsionarse */
+  border-radius: 8px;
+  margin-bottom: 10px;
 }
 
 .product-item h3 {
-    color: #fff;
-    font-size: 18px;
+  color: #fff;
+  font-size: 18px;
 }
 
 .product-item:hover {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
+
 
 /* Footer */
 .footer {

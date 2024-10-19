@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from myapp.models import Producto
+from django.conf import settings
 
 # Create your views here.
 
@@ -10,9 +11,12 @@ def home(request):
     productos_populares = Producto.objects.filter(popular=True)
     data = {
         'tendencia': productos_tendencia,
-        'populares': productos_populares
+        'populares': productos_populares,
+        'MEDIA_URL': settings.MEDIA_URL,
     }
     return render(request, 'home.html', data)
+
+
 
 from django.contrib.auth.decorators import login_required
 
@@ -80,4 +84,7 @@ def chat_with_rasa(request):
 from django.shortcuts import render
 
 def chat_page(request):
-    return render(request, 'chat.html')
+    data = {
+        'MEDIA_URL': settings.MEDIA_URL,
+    }
+    return render(request, 'chat.html', data)
