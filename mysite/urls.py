@@ -17,7 +17,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-from myapp.views import home, filter_products, chat_with_rasa, chat_page
+from myapp.views import home, filter_products, chat_with_rasa, chat_page, intelligent_filter
 from user_app.views import log, reg
 from django.contrib.auth.views import LoginView, LogoutView
 from catalog_app.views import catalog, catalogue
@@ -41,6 +41,7 @@ urlpatterns = [
     path('cart/', cart, name='cart'),  # Vista para ver el carrito
     path('agregar/<int:producto_id>/', agregar_al_carrito, name='agregar_al_carrito'),  # Vista para agregar al carrito
     path('factura/', generar_factura, name='generar_factura'),  # Vista para generar factura
+    path('intelligent_filter/', intelligent_filter, name='intelligent_filter'),
 ]
 #path('logout/', CustomLogoutView.as_view(), name='logout'),
 #path('logout/', auth_views.LogoutView.as_view(), name='logout'),

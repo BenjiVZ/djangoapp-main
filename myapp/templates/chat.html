@@ -1,5 +1,7 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -193,8 +195,94 @@
             align-items: center;
             padding: 20px;
         }
+
+        /* ... (mantén todos tus estilos existentes) ... */
+        .filter-button {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 10px 20px;
+            background-color: #2EE59D;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            z-index: 1000;
+        }
+
+        #intelligent-filter-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 600px;
+            height: 80%;
+            max-height: 600px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #filter-chat-log {
+            flex-grow: 1;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+        }
+
+        #filter-user-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        #filter-user-message {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #filter-send-button {
+            padding: 10px 20px;
+            background-color: #2EE59D;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .product-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .product-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .product-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
     </style>
 </head>
+
 <body>
     <header class="header">
         <div class="wrap">
@@ -202,6 +290,15 @@
         </div>
     </header>
     <main class="main">
+        <button id="filter-button" class="filter-button">Filtrado Inteligente</button>
+        <div id="intelligent-filter-container">
+            <h2>Filtrado Inteligente</h2>
+            <div id="filter-chat-log"></div>
+            <div id="filter-user-input">
+                <input type="text" id="filter-user-message" placeholder="Buscar productos...">
+                <button id="filter-send-button">Buscar</button>
+            </div>
+        </div>
         <div class="chat-container">
             <div class="chat-header">Chat con el Bot</div>
             <div id="chat-log"></div>
@@ -213,6 +310,7 @@
     </main>
 
     <script>
+        // Código original del bot
         function sendMessage() {
             const message = document.getElementById("user-message").value;
             if (message.trim() === '') return;
@@ -245,6 +343,66 @@
                 sendMessage();
             }
         });
+
+        // Código actualizado para el filtrado inteligente
+        const filterButton = document.getElementById('filter-button');
+        const filterContainer = document.getElementById('intelligent-filter-container');
+        const filterChatLog = document.getElementById('filter-chat-log');
+        const filterUserMessage = document.getElementById('filter-user-message');
+        const filterSendButton = document.getElementById('filter-send-button');
+
+        filterButton.addEventListener('click', function () {
+            filterContainer.style.display = filterContainer.style.display === 'none' ? 'flex' : 'none';
+        });
+
+        filterSendButton.addEventListener('click', sendFilterMessage);
+        filterUserMessage.addEventListener('keypress', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                sendFilterMessage();
+            }
+        });
+
+        function sendFilterMessage() {
+            const message = filterUserMessage.value;
+            if (message.trim() === '') return;
+
+            filterChatLog.innerHTML += `<div class="message user-message">${message}</div>`;
+
+            fetch('/intelligent_filter/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ "message": message })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    let productHTML = '<div class="product-list">';
+                    data.productos.forEach(producto => {
+                        productHTML += `
+                        <div class="product-item">
+                            <img src="${producto.imagen}" alt="${producto.nombre}">
+                            <h3>${producto.nombre}</h3>
+                            <p>Precio: $${producto.precio}</p>
+                        </div>
+                    `;
+                    });
+                    productHTML += '</div>';
+
+                    filterChatLog.innerHTML += `
+                    <div class="message bot-message">
+                        ${data.text}
+                        ${productHTML}
+                    </div>
+                `;
+
+                    filterChatLog.scrollTop = filterChatLog.scrollHeight;
+                    filterUserMessage.value = '';
+                });
+        }
     </script>
 </body>
+
 </html>
