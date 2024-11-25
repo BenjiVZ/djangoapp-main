@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat con el Bot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         :root {
             --primary-color: #000000;
@@ -197,21 +198,6 @@
         }
 
         /* ... (mantén todos tus estilos existentes) ... */
-        .filter-button {
-            position: fixed;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            padding: 10px 20px;
-            background-color: #2EE59D;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
-            z-index: 1000;
-        }
-
         #intelligent-filter-container {
             display: none;
             position: fixed;
@@ -219,92 +205,158 @@
             left: 50%;
             transform: translate(-50%, -50%);
             width: 90%;
-            max-width: 600px;
-            height: 80%;
-            max-height: 600px;
-            background-color: rgba(255, 255, 255, 0.95);
+            max-width: 500px;
+            background-color: rgba(0, 0, 0, 0.9);
             border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             z-index: 1001;
-            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .close-filter {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            color: white;
+            cursor: pointer;
+            font-size: 1.5em;
+            padding: 5px;
+        }
+
+        #filter-button {
+            padding: 12px;
+            width: 45px;
+            height: 45px;
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #filter-button:hover {
+            background-color: #2EE59D;
+            transform: scale(1.05);
         }
 
         #filter-chat-log {
-            flex-grow: 1;
+            height: 400px;
             overflow-y: auto;
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-bottom: 10px;
-            background-color: #f9f9f9;
-        }
-
-        #filter-user-input {
+            padding: 20px;
             display: flex;
-            gap: 10px;
-        }
-
-        #filter-user-message {
-            flex-grow: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        #filter-send-button {
-            padding: 10px 20px;
-            background-color: #2EE59D;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            flex-direction: column;
+            background-color: transparent;
         }
 
         .product-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            padding: 10px;
         }
 
         .product-item {
-            border: 1px solid #ddd;
+            background-color: rgba(255, 255, 255, 0.1);
             border-radius: 8px;
             padding: 10px;
             text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .product-item:hover {
+            transform: translateY(-5px);
         }
 
         .product-item img {
-            max-width: 100%;
-            height: auto;
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
             border-radius: 5px;
+            margin-bottom: 8px;
+        }
+
+        .product-item h3 {
+            font-size: 0.9em;
+            margin: 5px 0;
+            color: white;
+        }
+
+        .product-item p {
+            font-size: 0.8em;
+            color: #2EE59D;
+        }
+
+        #filter-user-input {
+            display: flex;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        #filter-user-message {
+            flex-grow: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            background-color: var(--input-background);
+            color: var(--text-color);
+            font-size: 1em;
+        }
+
+        #filter-send-button {
+            padding: 12px 24px;
+            margin-left: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
         }
     </style>
 </head>
 
 <body>
+    <div class="overlay"></div>
     <header class="header">
         <div class="wrap">
             <button class="button"><a href="{% url 'home' %}" class="button2 b-blue rot-135">Salir</a></button>
         </div>
     </header>
     <main class="main">
-        <button id="filter-button" class="filter-button">Filtrado Inteligente</button>
-        <div id="intelligent-filter-container">
-            <h2>Filtrado Inteligente</h2>
-            <div id="filter-chat-log"></div>
-            <div id="filter-user-input">
-                <input type="text" id="filter-user-message" placeholder="Buscar productos...">
-                <button id="filter-send-button">Buscar</button>
-            </div>
-        </div>
         <div class="chat-container">
             <div class="chat-header">Chat con el Bot</div>
             <div id="chat-log"></div>
             <div id="user-input">
                 <input type="text" id="user-message" placeholder="Escribe tu mensaje...">
                 <button onclick="sendMessage()">Enviar</button>
+                <button id="filter-button" class="filter-button">
+                    <i class="fas fa-filter"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="intelligent-filter-container">
+            <span class="close-filter">&times;</span>
+            <div class="chat-header">Filtrado Inteligente</div>
+            <div id="filter-chat-log"></div>
+            <div id="filter-user-input">
+                <input type="text" id="filter-user-message" placeholder="Buscar productos...">
+                <button id="filter-send-button">Buscar</button>
             </div>
         </div>
     </main>
@@ -347,28 +399,39 @@
         // Código actualizado para el filtrado inteligente
         const filterButton = document.getElementById('filter-button');
         const filterContainer = document.getElementById('intelligent-filter-container');
-        const filterChatLog = document.getElementById('filter-chat-log');
+        const overlay = document.querySelector('.overlay');
+        const closeFilter = document.querySelector('.close-filter');
+
+        filterButton.addEventListener('click', function() {
+            filterContainer.style.display = 'block';
+            overlay.style.display = 'block';
+        });
+
+        closeFilter.addEventListener('click', function() {
+            filterContainer.style.display = 'none';
+            overlay.style.display = 'none';
+        });
+
+        overlay.addEventListener('click', function() {
+            filterContainer.style.display = 'none';
+            overlay.style.display = 'none';
+        });
+
+        // Agregar estas constantes al inicio del script
         const filterUserMessage = document.getElementById('filter-user-message');
+        const filterChatLog = document.getElementById('filter-chat-log');
         const filterSendButton = document.getElementById('filter-send-button');
 
-        filterButton.addEventListener('click', function () {
-            filterContainer.style.display = filterContainer.style.display === 'none' ? 'flex' : 'none';
-        });
-
-        filterSendButton.addEventListener('click', sendFilterMessage);
-        filterUserMessage.addEventListener('keypress', function (event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                sendFilterMessage();
-            }
-        });
-
+        // Actualizar la función sendFilterMessage
         function sendFilterMessage() {
             const message = filterUserMessage.value;
             if (message.trim() === '') return;
 
+            // Mostrar el mensaje del usuario
             filterChatLog.innerHTML += `<div class="message user-message">${message}</div>`;
+            filterChatLog.scrollTop = filterChatLog.scrollHeight;
 
+            // Realizar la petición al servidor
             fetch('/intelligent_filter/', {
                 method: 'POST',
                 headers: {
@@ -377,31 +440,48 @@
                 },
                 body: JSON.stringify({ "message": message })
             })
-                .then(response => response.json())
-                .then(data => {
-                    let productHTML = '<div class="product-list">';
+            .then(response => response.json())
+            .then(data => {
+                let responseHTML = `<div class="message bot-message">${data.text}`;
+                
+                if (data.productos && data.productos.length > 0) {
+                    responseHTML += '<div class="product-list">';
                     data.productos.forEach(producto => {
-                        productHTML += `
-                        <div class="product-item">
-                            <img src="${producto.imagen}" alt="${producto.nombre}">
-                            <h3>${producto.nombre}</h3>
-                            <p>Precio: $${producto.precio}</p>
-                        </div>
-                    `;
+                        responseHTML += `
+                            <div class="product-item">
+                                <img src="${producto.imagen}" alt="${producto.nombre}">
+                                <h3>${producto.nombre}</h3>
+                                <p>$${producto.precio}</p>
+                            </div>
+                        `;
                     });
-                    productHTML += '</div>';
-
-                    filterChatLog.innerHTML += `
+                    responseHTML += '</div>';
+                }
+                
+                responseHTML += '</div>';
+                filterChatLog.innerHTML += responseHTML;
+                filterChatLog.scrollTop = filterChatLog.scrollHeight;
+                filterUserMessage.value = '';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                filterChatLog.innerHTML += `
                     <div class="message bot-message">
-                        ${data.text}
-                        ${productHTML}
+                        Lo siento, hubo un error al procesar tu solicitud.
                     </div>
                 `;
-
-                    filterChatLog.scrollTop = filterChatLog.scrollHeight;
-                    filterUserMessage.value = '';
-                });
+                filterChatLog.scrollTop = filterChatLog.scrollHeight;
+            });
         }
+
+        // Agregar los event listeners
+        filterSendButton.addEventListener('click', sendFilterMessage);
+        filterUserMessage.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                sendFilterMessage();
+            }
+        });
     </script>
 </body>
 

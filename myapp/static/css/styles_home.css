@@ -84,7 +84,7 @@ body {
 nav.nav {
     display: flex;
     justify-content: center;
-    background-color: #222;
+    background-color: #222222d3;
     padding: 8px; /* Reducimos el padding */
 }
 
@@ -101,7 +101,7 @@ nav.nav a:hover {
 
 
 header.header {
-    background-color: #000;
+    background-color: #000000d7;
     color: #fff;
     text-align: center;
     padding: 20px;
@@ -128,7 +128,7 @@ h2 {
 }
 
 .product-item {
-  background-color: #111;
+  background-color: #1111118b;
   border-radius: 8px;
   padding: 10px;
   text-align: center;
@@ -163,7 +163,7 @@ h2 {
     flex-flow: row wrap;
     padding: 30px 30px 20px 30px;
     color: #d3d3d3; /* Texto claro */
-    background-color: #1c1c1c; /* Fondo oscuro */
+    background-color: #000000d1; /* Fondo oscuro */
     border-top: 1px solid #333; /* Borde oscuro */
   }
   

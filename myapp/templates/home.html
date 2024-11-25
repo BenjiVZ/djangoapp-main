@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Home - Cosmeticos</title>
   <link rel="stylesheet" href="{% static 'css/styles_home.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     body {
       background-image: url("{{ MEDIA_URL }}fondo/Witch.jpeg");
@@ -84,7 +85,7 @@
 
   <main class="main">
     <section class="section-products">
-      <h2>Productos en Tendencia</h2>
+      <h2 style="color: rgb(0, 0, 0);">Productos en Tendencia</h2>
       <div class="product-list">
         {% for producto in tendencia %}
         <article class="product-item">
@@ -96,7 +97,7 @@
     </section>
 
     <section class="section-products">
-      <h2>Productos Populares</h2>
+      <h2 style="color: rgb(0, 0, 0);">Productos Populares</h2>
       <div class="product-list">
         {% for producto in populares %}
         <article class="product-item">

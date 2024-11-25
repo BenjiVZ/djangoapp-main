@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from myapp.models import Producto
 from django.conf import settings
+from django.db.models import Q
 
 # Create your views here.
 
@@ -97,20 +98,27 @@ def intelligent_filter(request):
         
         productos = Producto.objects.all()
         
-        if 'marca' in user_message:
-            productos = productos.filter(marca__nombre__icontains=user_message.split('marca')[1].strip())
-        elif 'descripción' in user_message:
-            productos = productos.filter(descripcion__icontains=user_message.split('descripción')[1].strip())
-        elif 'nombre' in user_message:
-            productos = productos.filter(nombre__icontains=user_message.split('nombre')[1].strip())
-        elif 'precio' in user_message:
-            try:
-                precio = float(user_message.split('precio')[1].strip())
-                productos = productos.filter(precio__lte=precio)
-            except ValueError:
-                pass
-        elif 'económica' in user_message or 'barata' in user_message:
-            productos = productos.order_by('precio')[:5]  # Obtiene los 5 productos más baratos
+        # Búsqueda general si no hay palabras clave específicas
+        if not any(keyword in user_message for keyword in ['marca', 'descripción', 'precio', 'económica', 'barata']):
+            productos = productos.filter(
+                Q(nombre__icontains=user_message) |
+                Q(descripcion__icontains=user_message) |
+                Q(marca__nombre__icontains=user_message)
+            )
+        else:
+            # Mantener la lógica existente para búsquedas específicas
+            if 'marca' in user_message:
+                productos = productos.filter(marca__nombre__icontains=user_message.split('marca')[1].strip())
+            elif 'descripción' in user_message:
+                productos = productos.filter(descripcion__icontains=user_message.split('descripción')[1].strip())
+            elif 'precio' in user_message:
+                try:
+                    precio = float(user_message.split('precio')[1].strip())
+                    productos = productos.filter(precio__lte=precio)
+                except ValueError:
+                    pass
+            elif 'económica' in user_message or 'barata' in user_message:
+                productos = productos.order_by('precio')[:5]
 
         if productos:
             productos_data = [{
@@ -120,12 +128,12 @@ def intelligent_filter(request):
             } for p in productos]
             
             response = {
-                "text": f"Encontré estos productos:",
+                "text": f"Encontré estos productos relacionados con '{user_message}':",
                 "productos": productos_data
             }
         else:
             response = {
-                "text": "Lo siento, no encontré productos que coincidan con tu búsqueda.",
+                "text": f"Lo siento, no encontré productos que coincidan con '{user_message}'.",
                 "productos": []
             }
 

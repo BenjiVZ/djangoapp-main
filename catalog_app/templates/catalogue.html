@@ -14,19 +14,137 @@
             background-position: center;
             background-repeat: no-repeat;
         }
+
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background-color: rgba(46, 229, 157, 0.95);
+            color: black;
+            padding: 15px 25px;
+            border-radius: 12px;
+            transform: translateX(200%);
+            transition: all 0.3s ease-in-out;
+            z-index: 999;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 15px rgba(46, 229, 157, 0.3);
+            font-weight: 600;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .cart-icon {
+            position: relative;
+            z-index: 1000;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            backdrop-filter: blur(8px);
+            font-size: 1.1em;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .cart-icon:hover {
+            background-color: rgba(46, 229, 157, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 229, 157, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .cart-count {
+            background-color: #2EE59D;
+            color: black;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            min-width: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .cart-count.bump {
+            animation: bump 0.3s ease-out;
+        }
+
+        @keyframes bump {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .notification.error {
+            background-color: rgba(255, 0, 0, 0.9);
+            color: white;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .header .wrap {
+            margin-right: auto;
+        }
+
+        .button {
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .button:hover {
+            background-color: rgba(46, 229, 157, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 229, 157, 0.3);
+        }
+
+        .button a {
+            color: white;
+            text-decoration: none;
+        }
     </style>
 </head>
 
 <body>
-    <nav>
-    </nav>
+<!--     <nav>
+    </nav> -->
     <header class="header">
         <div class="wrap">
-            <button class="button"><a href="{% url 'home' %}" class="button2 b-blue rot-135">Salir</a></button>
+            <button class="button">
+                <a href="{% url 'home' %}" class="button2 b-blue rot-135">Salir</a>
+            </button>
         </div>
+        <a href="{% url 'cart' %}" class="cart-icon">
+            🛒 Carrito <span class="cart-count">{{ num_items }}</span>
+        </a>
     </header>
 
-    <h1>Catálogo de Productos</h1>
+    <h1 >Catálogo de Productos</h1>
+
+    <div class="notification" id="notification">
+        Producto agregado al carrito
+    </div>
+
 
     <main class="main">
         <div class="product-list">
@@ -36,8 +154,9 @@
                 <h2>{{ producto.nombre }}</h2>
                 <p>{{ producto.descripcion }}</p>
                 <p class="price">Precio: ${{ producto.precio }}</p>
-                <button class="bubbly-button"><a href="{% url 'agregar_al_carrito' producto.id %}">Agregar al
-                        Carrito</a></button>
+                <button class="bubbly-button" onclick="agregarAlCarrito({{ producto.id }}, '{{ producto.nombre }}')">
+                    Agregar al Carrito
+                </button>
             </div>
             {% endfor %}
         </div>
@@ -60,6 +179,77 @@
         for (var i = 0; i < bubblyButtons.length; i++) {
             bubblyButtons[i].addEventListener('click', animateButton, false);
         }
+
+        // Contador del carrito
+        let cartCount = {{ num_items }};  // Inicializar con el valor del servidor
+        const cartCountElement = document.querySelector('.cart-count');
+
+        // Función para animar el contador
+        function animateCounter() {
+            const counter = document.querySelector('.cart-count');
+            counter.classList.add('bump');
+            setTimeout(() => counter.classList.remove('bump'), 300);
+        }
+
+        // Función actualizada para agregar al carrito
+        function agregarAlCarrito(productoId, nombreProducto) {
+            fetch(`/cart/agregar/${productoId}/`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Incrementar el contador local
+                    cartCount = data.num_items;
+                    cartCountElement.textContent = cartCount;
+                    animateCounter();
+
+                    // Mostrar notificación
+                    const notification = document.getElementById('notification');
+                    notification.textContent = `¡${nombreProducto} agregado al carrito!`;
+                    notification.classList.remove('error');
+                    notification.classList.add('show');
+
+                    // Ocultar notificación después de 3 segundos
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const notification = document.getElementById('notification');
+                notification.textContent = 'Error al agregar el producto';
+                notification.classList.add('error', 'show');
+                setTimeout(() => {
+                    notification.classList.remove('show', 'error');
+                }, 3000);
+            });
+        }
+
+        // Función para actualizar el contador desde el servidor
+        function actualizarContador() {
+            fetch('/cart/', {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.num_items !== cartCount) {
+                    cartCount = data.num_items;
+                    cartCountElement.textContent = cartCount;
+                }
+            });
+        }
+
+        // Actualizar el contador cada 5 segundos
+        setInterval(actualizarContador, 5000);
     </script>
 </body>
 
