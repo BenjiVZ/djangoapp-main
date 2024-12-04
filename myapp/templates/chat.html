@@ -70,6 +70,7 @@
             font-size: 0.9em;
             line-height: 1.4;
             word-wrap: break-word;
+            animation: slideIn 0.3s ease-out forwards;
         }
 
         .user-message {
@@ -272,11 +273,13 @@
         }
 
         .product-item {
+            position: relative;
             background-color: rgba(255, 255, 255, 0.1);
             border-radius: 8px;
             padding: 10px;
             text-align: center;
             transition: transform 0.2s;
+            animation: slideIn 0.3s ease-out forwards;
         }
 
         .product-item:hover {
@@ -327,6 +330,234 @@
             border-radius: 25px;
             cursor: pointer;
         }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .product-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: transform 0.2s, background-color 0.2s;
+            animation: slideIn 0.3s ease-out forwards;
+        }
+
+        .product-card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .product-card h4 {
+            margin: 0;
+            color: white;
+            font-size: 0.95em;
+            font-weight: 500;
+        }
+
+        .product-card p {
+            margin: 0;
+            color: #2EE59D;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .product-card small {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: var(--message-bot-bg);
+            border-radius: 18px;
+            margin-bottom: 10px;
+            align-self: flex-start;
+            border-bottom-left-radius: 0;
+            width: fit-content;
+        }
+
+        .typing-indicator .dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: bounce 1.5s infinite;
+            display: inline-block;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .brand-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .brand-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, background-color 0.2s;
+            min-height: 60px;
+        }
+
+        .brand-card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .brand-card h4 {
+            margin: 0;
+            color: white;
+            font-size: 0.95em;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Animación de entrada para las tarjetas */
+        .brand-card, .product-card {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .product-card {
+            position: relative;
+        }
+
+        .product-tooltip {
+            visibility: hidden;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            width: max-content;
+            max-width: 200px;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+            text-align: center;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: rgba(0, 0, 0, 0.9) transparent transparent transparent;
+        }
+
+        .product-card:hover .product-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Agregar estos estilos para el tooltip en el filtrado inteligente */
+        .product-item {
+            position: relative;  /* Para posicionar el tooltip */
+        }
+
+        .product-tooltip {
+            visibility: hidden;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            width: max-content;
+            max-width: 200px;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+            text-align: center;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: rgba(0, 0, 0, 0.9) transparent transparent transparent;
+        }
+
+        .product-item:hover .product-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
     </style>
 </head>
 
@@ -340,7 +571,8 @@
     <main class="main">
         <div class="chat-container">
             <div class="chat-header">Chat con el Bot</div>
-            <div id="chat-log"></div>
+            <div id="chat-log">
+            </div>
             <div id="user-input">
                 <input type="text" id="user-message" placeholder="Escribe tu mensaje...">
                 <button onclick="sendMessage()">Enviar</button>
@@ -362,13 +594,119 @@
     </main>
 
     <script>
-        // Código original del bot
+        function formatBrandsMessage(text) {
+            if (text.toLowerCase().includes('marcas disponibles')) {
+                // Extraer las marcas del texto
+                const brands = text
+                    .split('\n')
+                    .filter(line => line.trim().startsWith('-'))
+                    .map(line => line.replace('-', '').trim());
+
+                return `
+                    <div>Aquí están las marcas disponibles:</div>
+                    <div class="brand-grid">
+                        ${brands.map(brand => `
+                            <div class="brand-card">
+                                <h4>${brand}</h4>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            return text;
+        }
+
+        async function parseProductText(text) {
+            const lines = text.split('\n').filter(line => line.trim());
+            const productsPromises = [];
+
+            lines.forEach(line => {
+                if (line.trim().startsWith('-')) {
+                    line = line.substring(1).trim();
+                    const match = line.match(/(.*?):\s*\$(\d+)\s*\(Marca:\s*(.*?)\)/);
+                    
+                    if (match) {
+                        const [_, name, price, brand] = match;
+                        const productPromise = fetch(`/get_product_use/?name=${encodeURIComponent(name.trim())}`)
+                            .then(response => response.json())
+                            .then(data => ({
+                                name: name.trim(),
+                                price: price.trim(),
+                                brand: brand.trim(),
+                                uso: data.uso || 'Uso no especificado'
+                            }))
+                            .catch(() => ({
+                                name: name.trim(),
+                                price: price.trim(),
+                                brand: brand.trim(),
+                                uso: 'Uso no especificado'
+                            }));
+                        
+                        productsPromises.push(productPromise);
+                    }
+                }
+            });
+
+            // Esperar a que todas las promesas se resuelvan
+            return Promise.all(productsPromises);
+        }
+
+        async function formatProductsMessage(text) {
+            if (text.toLowerCase().includes('productos disponibles')) {
+                try {
+                    const products = await parseProductText(text);
+                    
+                    if (!products || products.length === 0) {
+                        return text;
+                    }
+
+                    return `
+                        <div>Aquí están los productos disponibles:</div>
+                        <div class="product-grid">
+                            ${products.map(product => `
+                                <div class="product-card">
+                                    <div class="product-tooltip">${product.uso}</div>
+                                    <h4>${product.name}</h4>
+                                    <p>$${product.price}</p>
+                                    <small>Marca: ${product.brand}</small>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } catch (error) {
+                    console.error('Error formatting products:', error);
+                    return text;
+                }
+            }
+            return text;
+        }
+
         function sendMessage() {
             const message = document.getElementById("user-message").value;
             if (message.trim() === '') return;
 
             const chatLog = document.getElementById("chat-log");
-            chatLog.innerHTML += `<div class="message user-message">${message}</div>`;
+            
+            // Agregar mensaje del usuario
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'message user-message';
+            userMessageDiv.textContent = message;
+            chatLog.appendChild(userMessageDiv);
+            
+            // Crear y agregar el indicador de escritura
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'typing-indicator';
+            typingIndicator.innerHTML = `
+                <div class="dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            `;
+            chatLog.appendChild(typingIndicator);
+            chatLog.scrollTop = chatLog.scrollHeight;
+            
+            document.getElementById("user-message").value = '';
 
             fetch('/chat_page/', {
                 method: 'POST',
@@ -378,15 +716,36 @@
                 },
                 body: JSON.stringify({ "message": message })
             })
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach((msg) => {
-                        chatLog.innerHTML += `<div class="message bot-message">${msg.text}</div>`;
-                    });
+            .then(async response => {
+                typingIndicator.remove();
+                
+                const data = await response.json();
+                
+                for (const msg of data) {
+                    console.log("Mensaje recibido:", msg);
+                    const botMessageDiv = document.createElement('div');
+                    botMessageDiv.className = 'message bot-message';
+                    
+                    let formattedText = formatBrandsMessage(msg.text);
+                    formattedText = await formatProductsMessage(formattedText);
+                    
+                    botMessageDiv.innerHTML = formattedText;
+                    chatLog.appendChild(botMessageDiv);
+                }
 
-                    chatLog.scrollTop = chatLog.scrollHeight;
-                    document.getElementById("user-message").value = '';
-                });
+                chatLog.scrollTop = chatLog.scrollHeight;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                typingIndicator.remove();
+                
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'message bot-message';
+                errorDiv.textContent = 'Lo siento, hubo un error al procesar tu mensaje.';
+                chatLog.appendChild(errorDiv);
+                
+                chatLog.scrollTop = chatLog.scrollHeight;
+            });
         }
 
         document.getElementById("user-message").addEventListener("keypress", function (event) {
@@ -449,6 +808,7 @@
                     data.productos.forEach(producto => {
                         responseHTML += `
                             <div class="product-item">
+                                <div class="product-tooltip">${producto.uso}</div>
                                 <img src="${producto.imagen}" alt="${producto.nombre}">
                                 <h3>${producto.nombre}</h3>
                                 <p>$${producto.precio}</p>

@@ -36,6 +36,12 @@ class Producto(models.Model):
     marca = models.ForeignKey(Marca, on_delete=models.PROTECT)
     fecha_fabricacion = models.DateField()
     imagen = models.ImageField(upload_to="media/productos", null=True)
+    uso = models.TextField(
+        verbose_name="Uso del producto",
+        help_text="Especifica el uso recomendado del producto",
+        null=True,
+        blank=True
+    )
 
     def __str__(self):
         return self.nombre

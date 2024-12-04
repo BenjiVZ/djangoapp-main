@@ -17,7 +17,14 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-from myapp.views import home, filter_products, chat_with_rasa, chat_page, intelligent_filter
+from myapp.views import (
+    home, 
+    filter_products, 
+    chat_with_rasa, 
+    chat_page, 
+    intelligent_filter,
+    get_product_use  # Agregar esta importación
+)
 from user_app.views import log, reg
 from django.contrib.auth.views import LoginView, LogoutView
 from catalog_app.views import catalog, catalogue
@@ -39,6 +46,7 @@ urlpatterns = [
     path('chat/', chat_page, name='chat_page'),
     path('filter/', filter_products, name='filter_products'),
     path('intelligent_filter/', intelligent_filter, name='intelligent_filter'),
+    path('get_product_use/', get_product_use, name='get_product_use'),
     
     # URLs de autenticación
     path('register/', reg, name='regs'),

@@ -3,6 +3,11 @@ from django.contrib import messages
 from myapp.models import Producto
 from django.conf import settings
 from django.db.models import Q
+from fuzzywuzzy import fuzz
+from django.db.models import Q, Value, FloatField
+from django.db.models.functions import Greatest
+import unicodedata
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -87,9 +92,6 @@ def chat_with_rasa(request):
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 
-from django.shortcuts import render
-from django.http import JsonResponse
-
 @csrf_exempt
 def intelligent_filter(request):
     if request.method == 'POST':
@@ -97,14 +99,39 @@ def intelligent_filter(request):
         user_message = data.get('message', '').lower()
         
         productos = Producto.objects.all()
+        resultados = []
         
-        # Búsqueda general si no hay palabras clave específicas
+        # Función auxiliar para normalizar texto (quitar acentos)
+        def normalize_text(text):
+            return ''.join(c for c in unicodedata.normalize('NFD', text)
+                if unicodedata.category(c) != 'Mn').lower()
+        
+        # Si no hay palabras clave específicas, hacer búsqueda difusa
         if not any(keyword in user_message for keyword in ['marca', 'descripción', 'precio', 'económica', 'barata']):
-            productos = productos.filter(
-                Q(nombre__icontains=user_message) |
-                Q(descripcion__icontains=user_message) |
-                Q(marca__nombre__icontains=user_message)
-            )
+            user_message_norm = normalize_text(user_message)
+            
+            # Buscar en todos los productos
+            for producto in productos:
+                nombre_norm = normalize_text(producto.nombre)
+                desc_norm = normalize_text(producto.descripcion)
+                marca_norm = normalize_text(producto.marca.nombre)
+                
+                # Calcular similitud con diferentes campos
+                nombre_ratio = fuzz.partial_ratio(user_message_norm, nombre_norm)
+                desc_ratio = fuzz.partial_ratio(user_message_norm, desc_norm)
+                marca_ratio = fuzz.partial_ratio(user_message_norm, marca_norm)
+                
+                # Si alguna similitud es mayor al 75%, incluir el producto
+                if max(nombre_ratio, desc_ratio, marca_ratio) > 75:
+                    resultados.append({
+                        'producto': producto,
+                        'relevancia': max(nombre_ratio, desc_ratio, marca_ratio)
+                    })
+            
+            # Ordenar por relevancia
+            resultados = sorted(resultados, key=lambda x: x['relevancia'], reverse=True)
+            productos = [r['producto'] for r in resultados]
+        
         else:
             # Mantener la lógica existente para búsquedas específicas
             if 'marca' in user_message:
@@ -124,8 +151,9 @@ def intelligent_filter(request):
             productos_data = [{
                 'nombre': p.nombre,
                 'precio': p.precio,
-                'imagen': p.imagen.url if p.imagen else '/static/placeholder.png'
-            } for p in productos]
+                'imagen': p.imagen.url if p.imagen else '/static/placeholder.png',
+                'uso': p.uso or 'Uso no especificado'
+            } for p in productos[:10]]  # Limitamos a 10 resultados
             
             response = {
                 "text": f"Encontré estos productos relacionados con '{user_message}':",
@@ -146,3 +174,11 @@ def chat_page(request):
         'MEDIA_URL': settings.MEDIA_URL,
     }
     return render(request, 'chat.html', data)
+
+def get_product_use(request):
+    product_name = request.GET.get('name', '')
+    try:
+        producto = Producto.objects.get(nombre__iexact=product_name)
+        return JsonResponse({'uso': producto.uso or 'Uso no especificado'})
+    except Producto.DoesNotExist:
+        return JsonResponse({'uso': 'Uso no especificado'})
