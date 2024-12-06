@@ -10,7 +10,7 @@ class Carrito(models.Model):
         return f"Carrito de {self.usuario.username}"
 
 class CarritoItem(models.Model):
-    carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE, related_name='items')
+    carrito = models.ForeignKey(Carrito, related_name='items', on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField(default=1)
 

@@ -1,0 +1,57 @@
+:root {
+  /* Colores principales */
+  --navy: #001f3f;
+  --slate: #364a6f;
+  --sky: #e2f0ff;
+  --gold: #d8a31a;
+
+  /* Variantes transparentes */
+  --navy-90: rgba(0, 31, 63, 0.9);
+  --slate-80: rgba(54, 74, 111, 0.8);
+  --sky-10: rgba(226, 240, 255, 0.1);
+  --gold-80: rgba(216, 163, 26, 0.8);
+
+  /* Espaciado */
+  --spacing-xs: 0.25rem;  /* 4px */
+  --spacing-sm: 0.5rem;   /* 8px */
+  --spacing-md: 1rem;     /* 16px */
+  --spacing-lg: 1.5rem;   /* 24px */
+  --spacing-xl: 2rem;     /* 32px */
+
+  /* Tipografía */
+  --font-primary: 'Poppins', sans-serif;
+  --font-secondary: 'Inter', sans-serif;
+  
+  --font-size-xs: 0.75rem;   /* 12px */
+  --font-size-sm: 0.875rem;  /* 14px */
+  --font-size-md: 1rem;      /* 16px */
+  --font-size-lg: 1.125rem;  /* 18px */
+  --font-size-xl: 1.25rem;   /* 20px */
+
+  /* Bordes y sombras */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  --border-radius-full: 9999px;
+
+  /* Efectos */
+  --shadow-sm: 0 2px 4px rgba(0, 31, 63, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 31, 63, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 31, 63, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 31, 63, 0.1);
+
+  /* Transiciones */
+  --transition-fast: 150ms ease;
+  --transition-normal: 300ms ease;
+  --transition-slow: 500ms ease;
+
+  /* Z-index */
+  --z-negative: -1;
+  --z-elevate: 1;
+  --z-sticky: 100;
+  --z-drawer: 200;
+  --z-modal: 300;
+  --z-popover: 400;
+  --z-toast: 500;
+} 

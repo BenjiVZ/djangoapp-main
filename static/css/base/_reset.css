@@ -1,0 +1,77 @@
+/* Reset moderno y personalizado */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-primary);
+  line-height: 1.5;
+  color: var(--navy);
+  background-color: var(--sky);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+input, button, textarea, select {
+  font: inherit;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+/* Eliminar estilos por defecto de listas */
+ul, ol {
+  list-style: none;
+}
+
+/* Eliminar estilos por defecto de enlaces */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Mejorar interactividad */
+button, input[type="submit"], input[type="button"] {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* Mejorar accesibilidad del focus */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--sky-10);
+  border-radius: var(--border-radius-full);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--slate-80);
+  border-radius: var(--border-radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-80);
+} 

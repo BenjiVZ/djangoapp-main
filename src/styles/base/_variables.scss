@@ -1,0 +1,18 @@
+// Paleta de colores principal
+$navy-blue: #001f3f;      // Azul marino oscuro - Color principal
+$slate-blue: #364a6f;     // Azul pizarra - Color secundario
+$light-blue: #e2f0ff;     // Azul claro - Color de fondo/contraste
+$golden: #d8a31a;         // Dorado - Color de acento
+
+// Variables semánticas
+$primary-color: $navy-blue;
+$secondary-color: $slate-blue;
+$background-color: $light-blue;
+$accent-color: $golden;
+
+// Tipografía
+$font-family-base: 'Arial', sans-serif;
+$font-size-base: 16px;
+
+// Espaciado
+$spacing-unit: 8px; 

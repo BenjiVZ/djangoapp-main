@@ -1,263 +1,422 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home - Cosmeticos</title>
-  <link rel="stylesheet" href="{% static 'css/styles_home.css' %}">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      background-image: url("{{ MEDIA_URL }}fondo/Witch.jpeg");
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Cosméticos</title>
+    
+    <!-- Fuentes -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Estilos base -->
+    <link rel="stylesheet" href="{% static 'css/base/_variables.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base/_reset.css' %}">
+    
+    <!-- Componentes -->
+    <link rel="stylesheet" href="{% static 'css/components/_buttons.css' %}">
+    
+    <!-- Estilos específicos de la página -->
+    <style>
+        /* Hero section */
+        .hero {
+            min-height: 80vh;
+            background-image: url("{{ MEDIA_URL }}fondo/Witch.jpeg");
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-xl);
+        }
 
-    /* Chat Pop-up Styles */
-    #chat-container {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 300px;
-      max-width: 90%;
-      background-color: rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-      z-index: 1000;
-    }
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+        }
 
-    /* Close Button */
-    #close-chat {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 1.5em;
-      cursor: pointer;
-    }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 600px;
+        }
 
-    /* Chat Toggle Button */
-    #chat-toggle {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      padding: 10px 20px;
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-      border-radius: 25px;
-      cursor: pointer;
-      z-index: 1000;
-    }
-  </style>
+        .hero h1 {
+            color: var(--sky);
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-text {
+            color: var(--sky);
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-lg);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Navegación */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: var(--z-sticky);
+            padding: var(--spacing-md) var(--spacing-xl);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-md);
+        }
+
+        /* Productos */
+        .products-section {
+            padding: var(--spacing-xl);
+            background-color: var(--sky);
+        }
+
+        .section-title {
+            font-size: var(--font-size-xl);
+            color: var(--navy);
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+            position: relative;
+            font-weight: 600;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--gold);
+            border-radius: var(--border-radius-full);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            transition: transform var(--transition-normal);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-image {
+            aspect-ratio: 1;
+            object-fit: cover;
+            width: 100%;
+            height: 180px;
+        }
+
+        .product-info {
+            padding: var(--spacing-sm);
+            background: linear-gradient(
+                to bottom,
+                var(--navy-90),
+                var(--slate-80)
+            );
+            color: var(--sky);
+        }
+
+        .product-name {
+            font-size: var(--font-size-md);
+            margin-bottom: var(--spacing-xs);
+            color: var(--sky);
+            font-weight: 500;
+        }
+
+        .product-brand {
+            color: var(--gold);
+            font-size: var(--font-size-xs);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        /* Ajustes para los botones en la navegación */
+        .nav .btn {
+            font-size: var(--font-size-sm);
+            padding: 0.5rem 1rem;
+            border: 1px solid transparent;
+        }
+
+        .nav .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--sky);
+        }
+
+        .nav .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--sky);
+        }
+
+        .nav .btn-primary {
+            background: var(--navy);
+            color: var(--sky);
+        }
+
+        .nav .btn-accent {
+            background: var(--gold);
+            color: var(--navy);
+        }
+
+        .nav .btn-accent:hover {
+            background: var(--gold-80);
+            transform: translateY(-2px);
+        }
+
+        .products-carousel {
+            display: flex;
+            overflow-x: hidden;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            cursor: grab;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+            margin: 0 -20px;
+        }
+
+        .products-carousel .product-card {
+            min-width: 220px;
+            max-width: 220px;
+            flex-shrink: 0;
+        }
+
+        .products-carousel::-webkit-scrollbar {
+            display: none;
+        }
+
+        .carousel-section {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .carousel-gradient {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .carousel-gradient-left {
+            left: 0;
+            background: linear-gradient(to right, var(--sky), transparent);
+        }
+
+        .carousel-gradient-right {
+            right: 0;
+            background: linear-gradient(to left, var(--sky), transparent);
+        }
+
+        /* Estilos del Footer */
+        .footer {
+            background: var(--navy-90);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: var(--spacing-xl) 0;
+            color: var(--sky);
+            border-top: 1px solid var(--sky-10);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-xl);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-xl);
+        }
+
+        .footer-section h3 {
+            color: var(--gold);
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .footer-links a {
+            color: var(--sky);
+            transition: color var(--transition-fast);
+        }
+
+        .footer-links a:hover {
+            color: var(--gold);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+            border-top: 1px solid var(--sky-10);
+        }
+    </style>
 </head>
 
 <body>
-  <header class="header">
-    <h1>Bienvenidos a nuestra tienda de cosméticos</h1>
-  </header>
-  
-  <nav class="nav">
-    {% if not request.user.is_authenticated %}
-    <button class="btn-hover color-7"><a href="{% url 'logs' %}" class="button-link">Login</a></button>
-    <button class="btn-hover color-7"><a href="{% url 'regs' %}" class="button-link">Register</a></button>
-    <button class="btn-hover color-7"><a href="{% url 'catalog' %}" class="button-link">Catalogue</a></button>
-    {% elif request.user.profile.role == 'admin' %}
-    <button class="btn-hover color-3"><a href="{% url 'logst' %}" class="button-link">Logout</a></button>
-    <button class="btn-hover color-3"><a href="{% url 'catalog' %}" class="button-link">Catalogue</a></button>
-    <button class="btn-hover color-3"><a href="{% url 'catalogue' %}" class="button-link">Cataloguesss</a></button>
-    <button class="btn-hover color-3"><a href="{% url 'cart' %}" class="button-link">Carrito</a></button>
-    <button class="btn-hover color-7"><a href="{% url 'chat_page' %}" class="button-link">ChatBot</a></button>
-    <button class="btn-hover color-3"><a href="{% url 'admin:index' %}" class="button-link">Admin Panel</a></button>
-    {% else %}
-    <form action="{% url 'logout' %}" method="post" style="display:inline;">
-      {% csrf_token %}
-      <button class="btn-hover color-3">Logout</button>
-    </form>
-    <button class="btn-hover color-7"><a href="{% url 'chat_page' %}" class="button-link">ChatBot</a></button>
-<!--     <button class="btn-hover color-7"><a href="{% url 'catalog' %}" class="button-link">Catalogue</a></button> -->
-    <button class="btn-hover color-7"><a href="{% url 'catalogue' %}" class="button-link">Catalogues</a></button>
-    <button class="btn-hover color-7"><a href="{% url 'cart' %}" class="button-link">Carrito</a></button>
-    {% endif %}
-  </nav>
+    <nav class="nav">
+        <div class="nav-container">
+            {% if not request.user.is_authenticated %}
+                <a href="{% url 'logs' %}" class="btn btn-secondary">Login</a>
+                <a href="{% url 'regs' %}" class="btn btn-primary">Register</a>
+                <a href="{% url 'catalog' %}" class="btn btn-accent">Catalogue</a>
+            {% elif request.user.profile.role == 'admin' %}
+                <a href="{% url 'logst' %}" class="btn btn-secondary">Logout</a>
+                <a href="{% url 'catalogue' %}" class="btn btn-primary">Products</a>
+                <a href="{% url 'cart' %}" class="btn btn-accent">Cart</a>
+                <a href="{% url 'chat_page' %}" class="btn btn-secondary">ChatBot</a>
+                <a href="{% url 'admin:index' %}" class="btn btn-primary">Admin Panel</a>
+            {% else %}
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button class="btn btn-secondary">Logout</button>
+                </form>
+                <a href="{% url 'chat_page' %}" class="btn btn-primary">ChatBot</a>
+                <a href="{% url 'catalogue' %}" class="btn btn-accent">Products</a>
+                <a href="{% url 'cart' %}" class="btn btn-secondary">Cart</a>
+            {% endif %}
+        </div>
+    </nav>
 
-  <main class="main">
-    <section class="section-products">
-      <h2 style="color: rgb(0, 0, 0);">Productos en Tendencia</h2>
-      <div class="product-list">
-        {% for producto in tendencia %}
-        <article class="product-item">
-          <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
-          <h3>{{ producto.nombre }}</h3>
-        </article>
-        {% endfor %}
-      </div>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Descubre tu belleza natural</h1>
+            <p class="hero-text">Explora nuestra colección de productos cosméticos de alta calidad</p>
+            <a href="{% url 'catalogue' %}" class="btn btn-accent btn-lg">Ver Productos</a>
+        </div>
     </section>
 
-    <section class="section-products">
-      <h2 style="color: rgb(0, 0, 0);">Productos Populares</h2>
-      <div class="product-list">
-        {% for producto in populares %}
-        <article class="product-item">
-          <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
-          <h3>{{ producto.nombre }}</h3>
-        </article>
-        {% endfor %}
-      </div>
+    <section class="products-section">
+        <h2 class="section-title">Productos en Tendencia</h2>
+        <div class="carousel-section">
+            <div class="carousel-gradient carousel-gradient-left"></div>
+            <div class="products-carousel" id="trendingCarousel">
+                {% for producto in tendencia %}
+                <article class="product-card">
+                    <img class="product-image" src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                    <div class="product-info">
+                        <h3 class="product-name">{{ producto.nombre }}</h3>
+                        <p class="product-brand">{{ producto.marca }}</p>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+            <div class="carousel-gradient carousel-gradient-right"></div>
+        </div>
     </section>
 
-    <!-- Chat Toggle Button -->
-<!--     <button id="chat-toggle" class="btn-hover color-7">ChatBot</button> -->
+    <section class="products-section">
+        <h2 class="section-title">Productos Populares</h2>
+        <div class="carousel-section">
+            <div class="carousel-gradient carousel-gradient-left"></div>
+            <div class="products-carousel" id="popularCarousel">
+                {% for producto in populares %}
+                <article class="product-card">
+                    <img class="product-image" src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                    <div class="product-info">
+                        <h3 class="product-name">{{ producto.nombre }}</h3>
+                        <p class="product-brand">{{ producto.marca }}</p>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+            <div class="carousel-gradient carousel-gradient-right"></div>
+        </div>
+    </section>
 
-    <!-- Chat Container -->
-<!--     <div id="chat-container" class="chat-container" style="display: none;">
-      <div class="chat-header">Chat con el Bot
-        <button id="close-chat"
-          style="float: right; background: none; border: none; color: white; font-size: 1.2em; cursor: pointer;">&times;</button>
-      </div>
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Sobre Nosotros</h3>
+                <div class="footer-links">
+                    <a href="#">Nuestra Historia</a>
+                    <a href="#">Equipo</a>
+                    <a href="#">Contacto</a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Servicios</h3>
+                <div class="footer-links">
+                    <a href="#">Envíos</a>
+                    <a href="#">Devoluciones</a>
+                    <a href="#">Atención al Cliente</a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <div class="footer-links">
+                    <a href="#">Términos y Condiciones</a>
+                    <a href="#">Política de Privacidad</a>
+                    <a href="#">Cookies</a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Síguenos</h3>
+                <div class="footer-links">
+                    <a href="#">Instagram</a>
+                    <a href="#">Facebook</a>
+                    <a href="#">Twitter</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 Tu Empresa de Cosméticos. Todos los derechos reservados.</p>
+        </div>
+    </footer>
 
-    </div> -->
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/carousel.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar carruseles con velocidad más lenta
+            new SmoothCarousel(document.getElementById('trendingCarousel'), {
+                speed: 0.15, // Velocidad reducida
+                interval: 6000
+            });
 
-  </main>
-
-  <footer class="footer">
-    <div class="footer__addr">
-      <h1 class="footer__logo">Something</h1>
-
-      <h2>Contact</h2>
-
-      <address>
-        5534 Somewhere In. The World 22193-10212<br>
-
-        <a class="footer__btn" href="mailto:example@gmail.com">Email Us</a>
-      </address>
-    </div>
-
-    <ul class="footer__nav">
-      <li class="nav__item">
-        <h2 class="nav__title">Media</h2>
-
-        <ul class="nav__ul">
-          <li>
-            <a href="#">Online</a>
-          </li>
-
-          <li>
-            <a href="#">Print</a>
-          </li>
-
-          <li>
-            <a href="#">Alternative Ads</a>
-          </li>
-        </ul>
-      </li>
-
-      <li class="nav__item nav__item--extra">
-        <h2 class="nav__title">Technology</h2>
-
-        <ul class="nav__ul nav__ul--extra">
-          <li>
-            <a href="#">Hardware Design</a>
-          </li>
-
-          <li>
-            <a href="#">Software Design</a>
-          </li>
-
-          <li>
-            <a href="#">Digital Signage</a>
-          </li>
-
-          <li>
-            <a href="#">Automation</a>
-          </li>
-
-          <li>
-            <a href="#">Artificial Intelligence</a>
-          </li>
-
-          <li>
-            <a href="#">IoT</a>
-          </li>
-        </ul>
-      </li>
-
-      <li class="nav__item">
-        <h2 class="nav__title">Legal</h2>
-
-        <ul class="nav__ul">
-          <li>
-            <a href="#">Privacy Policy</a>
-          </li>
-
-          <li>
-            <a href="#">Terms of Use</a>
-          </li>
-
-          <li>
-            <a href="#">Sitemap</a>
-          </li>
-        </ul>
-      </li>
-    </ul>
-
-    <div class="legal">
-      <p>&copy; 2019 Something. All rights reserved.</p>
-
-      <div class="legal__links">
-        <span>Made with <span class="heart">♥</span> remotely from Anywhere</span>
-      </div>
-    </div>
-  </footer>
-  <script>
-    // Toggle chat visibility
-    document.getElementById("chat-toggle").addEventListener("click", function () {
-      document.getElementById("chat-container").style.display = "block";
-    });
-
-    // Close chat
-    document.getElementById("close-chat").addEventListener("click", function () {
-      document.getElementById("chat-container").style.display = "none";
-    });
-
-    // Existing sendMessage function
-    function sendMessage() {
-      const message = document.getElementById("user-message").value;
-      if (message.trim() === '') return;
-
-      const chatLog = document.getElementById("chat-log");
-      chatLog.innerHTML += `<div class="message user-message">${message}</div>`;
-
-      fetch('/chat/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: JSON.stringify({ "message": message })
-      })
-        .then(response => response.json())
-        .then(data => {
-          data.forEach((msg) => {
-            chatLog.innerHTML += `<div class="message bot-message">${msg.text}</div>`;
-          });
-
-          chatLog.scrollTop = chatLog.scrollHeight;
-          document.getElementById("user-message").value = '';
+            new SmoothCarousel(document.getElementById('popularCarousel'), {
+                speed: 0.1, // Velocidad reducida aún más
+                interval: 7000
+            });
         });
-    }
-
-    // Send message on pressing Enter
-    document.getElementById("user-message").addEventListener("keypress", function (event) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        sendMessage();
-      }
-    });
-  </script>
-
+    </script>
 </body>
-
 </html>

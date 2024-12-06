@@ -1,167 +1,137 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <meta name="description" content="Carrito de compras">
     <title>Carrito de Compras</title>
-    <style>
-        body {
-            background-image: url("{{ MEDIA_URL }}fondo/Witch.jpeg");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-        .quantity-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .quantity-btn {
-            padding: 5px 10px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .quantity {
-            min-width: 30px;
-            text-align: center;
-        }
-
-        .delete-btn {
-            padding: 5px 10px;
-            background-color: #ff4444;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .delete-btn:hover {
-            background-color: #cc0000;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .btn {
-            padding: 12px 25px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-size: 1.1em;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            background-color: rgba(0, 0, 0, 0.9);
-            color: white;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn:hover {
-            background-color: rgba(46, 229, 157, 0.9);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(46, 229, 157, 0.3);
-        }
-
-        .checkout {
-            background-color: #2EE59D;
-            color: black;
-        }
-
-        .continue-shopping {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .continue-shopping:before {
-            content: '🛍️';
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
-
 <body>
-    <header class="header">
-        <div class="wrap">
-            <button class="button"><a href="{% url 'home' %}" class="button2 b-blue rot-135">Salir</a></button>
+    <header class="cart-header">
+        <div class="header-container">
+            <h1 class="cart-title">Tu Carrito</h1>
+            <a href="{% url 'catalogue' %}" class="back-btn">Volver al Catálogo</a>
         </div>
     </header>
 
-    <main class="main">
-        <h1>Carrito de Compras</h1>
-
-        {% if items %}
-        <table class="cart-table">
-            <thead>
-                <tr>
-                    <th>Producto</th>
-                    <th>Cantidad</th>
-                    <th>Precio Unitario</th>
-                    <th>Precio Total</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in items %}
-                <tr>
-                    <td>{{ item.producto.nombre }}</td>
-                    <td>
-                        <div class="quantity-controls">
-                            <form method="POST" action="{% url 'actualizar_cantidad' item.id %}" style="display: inline;">
-                                {% csrf_token %}
-                                <input type="hidden" name="action" value="decrease">
-                                <button type="submit" class="quantity-btn">-</button>
-                            </form>
-                            <span class="quantity">{{ item.cantidad }}</span>
-                            <form method="POST" action="{% url 'actualizar_cantidad' item.id %}" style="display: inline;">
-                                {% csrf_token %}
-                                <input type="hidden" name="action" value="increase">
-                                <button type="submit" class="quantity-btn">+</button>
-                            </form>
-                        </div>
-                    </td>
-                    <td>${{ item.producto.precio }}</td>
-                    <td>${{ item.get_total_item_price }}</td>
-                    <td>
-                        <form method="POST" action="{% url 'eliminar_del_carrito' item.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="delete-btn">Eliminar</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <main class="cart-container">
+        {% if cart_items %}
+        <div class="cart-items">
+            {% for item in cart_items %}
+            <div class="cart-item">
+                <div class="item-image">
+                    <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.nombre }}">
+                </div>
+                <div class="item-details">
+                    <h3 class="item-name">{{ item.producto.nombre }}</h3>
+                    <p class="item-price">${{ item.producto.precio }}</p>
+                </div>
+                <div class="quantity-controls">
+                    <button class="quantity-btn" onclick="updateQuantity({{ item.id }}, 'decrease')">-</button>
+                    <span class="quantity">{{ item.cantidad }}</span>
+                    <button class="quantity-btn" onclick="updateQuantity({{ item.id }}, 'increase')">+</button>
+                </div>
+                <button class="remove-btn" onclick="removeItem({{ item.id }})">×</button>
+            </div>
+            {% endfor %}
+        </div>
 
         <div class="cart-summary">
-            <p>Total: ${{ total }}</p>
-            <div class="action-buttons">
-                <a href="{% url 'catalogue' %}" class="btn continue-shopping">Seguir Comprando</a>
-                <a class="btn checkout" href="{% url 'procesar_pago' %}">Pagar</a>
+            <h2 class="summary-title">Resumen del Pedido</h2>
+            <div class="summary-item">
+                <span>Subtotal</span>
+                <span>${{ subtotal }}</span>
             </div>
+            <div class="summary-item">
+                <span>Envío</span>
+                <span>Gratis</span>
+            </div>
+            <div class="summary-total">
+                <span>Total</span>
+                <span>${{ total }}</span>
+            </div>
+            <button class="checkout-btn" onclick="irAPago()">Proceder al Pago</button>
         </div>
         {% else %}
-        <p>Tu carrito está vacío.</p>
+        <div class="empty-cart">
+            <div class="empty-cart-icon">🛒</div>
+            <p class="empty-cart-message">Tu carrito está vacío</p>
+            <a href="{% url 'catalogue' %}" class="continue-shopping">Continuar Comprando</a>
+        </div>
         {% endif %}
-
     </main>
 
-    <footer class="footer">
-        <p>&copy; 2024 Empresa. Todos los derechos reservados.</p>
-    </footer>
-</body>
+    <script>
+        // Función para obtener el token CSRF
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
 
+        function updateQuantity(itemId, action) {
+            fetch(`/cart/actualizar/${itemId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ action: action })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    console.error('Error:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function removeItem(itemId) {
+            if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
+                fetch(`/cart/eliminar/${itemId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        console.error('Error:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        }
+
+        function irAPago() {
+            if (confirm('¿Deseas proceder con el pago?')) {
+                window.location.href = '{% url "procesar_pago" %}';
+            }
+        }
+    </script>
+</body>
 </html>

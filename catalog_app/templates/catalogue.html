@@ -1,198 +1,59 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Catálogo de productos">
+    <title>Catálogo - Cosméticos</title>
     <link rel="stylesheet" href="{% static 'css/styles_catalogue.css' %}">
-    <title>Catálogo de Productos</title>
-    <style>
-        body {
-            background-image: url("{{ MEDIA_URL }}fondo/Witch.jpeg");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-        .notification {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            background-color: rgba(46, 229, 157, 0.95);
-            color: black;
-            padding: 15px 25px;
-            border-radius: 12px;
-            transform: translateX(200%);
-            transition: all 0.3s ease-in-out;
-            z-index: 999;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 4px 15px rgba(46, 229, 157, 0.3);
-            font-weight: 600;
-        }
-
-        .notification.show {
-            transform: translateX(0);
-        }
-
-        .cart-icon {
-            position: relative;
-            z-index: 1000;
-            background-color: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 30px;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            backdrop-filter: blur(8px);
-            font-size: 1.1em;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .cart-icon:hover {
-            background-color: rgba(46, 229, 157, 0.9);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(46, 229, 157, 0.3);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .cart-count {
-            background-color: #2EE59D;
-            color: black;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: bold;
-            min-width: 25px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .cart-count.bump {
-            animation: bump 0.3s ease-out;
-        }
-
-        @keyframes bump {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-
-        .notification.error {
-            background-color: rgba(255, 0, 0, 0.9);
-            color: white;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .header .wrap {
-            margin-right: auto;
-        }
-
-        .button {
-            background-color: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-size: 1em;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .button:hover {
-            background-color: rgba(46, 229, 157, 0.9);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(46, 229, 157, 0.3);
-        }
-
-        .button a {
-            color: white;
-            text-decoration: none;
-        }
-    </style>
 </head>
-
 <body>
-<!--     <nav>
-    </nav> -->
-    <header class="header">
-        <div class="wrap">
-            <button class="button">
-                <a href="{% url 'home' %}" class="button2 b-blue rot-135">Salir</a>
-            </button>
+    <header class="catalog-header">
+        <div class="header-container">
+            <h1 class="site-title">Descubre tu Belleza Natural</h1>
+            <div class="nav-actions">
+                <a href="{% url 'home' %}" class="back-btn">Volver al Inicio</a>
+                <div class="cart-container">
+                    <a href="{% url 'cart' %}" class="cart-link">
+                        <span class="cart-icon">🛒</span>
+                        <span class="cart-count">{{ num_items }}</span>
+                    </a>
+                </div>
+            </div>
         </div>
-        <a href="{% url 'cart' %}" class="cart-icon">
-            🛒 Carrito <span class="cart-count">{{ num_items }}</span>
-        </a>
     </header>
 
-    <h1 >Catálogo de Productos</h1>
-
-    <div class="notification" id="notification">
-        Producto agregado al carrito
-    </div>
-
-
-    <main class="main">
-        <div class="product-list">
+    <main class="catalog-container">
+        <div class="products-grid">
             {% for producto in productos %}
-            <div class="product-item">
-                <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
-                <h2>{{ producto.nombre }}</h2>
-                <p>{{ producto.descripcion }}</p>
-                <p class="price">Precio: ${{ producto.precio }}</p>
-                <button class="bubbly-button" onclick="agregarAlCarrito({{ producto.id }}, '{{ producto.nombre }}')">
-                    Agregar al Carrito
-                </button>
-            </div>
+            <article class="product-card">
+                <div class="product-image">
+                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                    <div class="product-overlay">
+                        <div class="product-details">
+                            <button class="details-btn" onclick="verDetalles('{{ producto.nombre }}', '{{ producto.descripcion }}', '{{ producto.marca }}', '{{ producto.precio }}', '{{ producto.imagen.url }}', '{{ producto.uso|default:'No especificado' }}')">
+                                Ver Detalles
+                            </button>
+                            <button class="add-to-cart" onclick="agregarAlCarrito({{ producto.id }}, '{{ producto.nombre }}')">
+                                Agregar al Carrito
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <p class="product-brand">{{ producto.marca }}</p>
+                    <h3 class="product-name">{{ producto.nombre }}</h3>
+                    <p class="product-price">$ {{ producto.precio }}</p>
+                </div>
+            </article>
             {% endfor %}
         </div>
     </main>
+
     <script>
-        var animateButton = function (e) {
-
-            e.preventDefault;
-            //reset animation
-            e.target.classList.remove('animate');
-
-            e.target.classList.add('animate');
-            setTimeout(function () {
-                e.target.classList.remove('animate');
-            }, 700);
-        };
-
-        var bubblyButtons = document.getElementsByClassName("bubbly-button");
-
-        for (var i = 0; i < bubblyButtons.length; i++) {
-            bubblyButtons[i].addEventListener('click', animateButton, false);
-        }
-
-        // Contador del carrito
-        let cartCount = {{ num_items }};  // Inicializar con el valor del servidor
-        const cartCountElement = document.querySelector('.cart-count');
-
-        // Función para animar el contador
-        function animateCounter() {
-            const counter = document.querySelector('.cart-count');
-            counter.classList.add('bump');
-            setTimeout(() => counter.classList.remove('bump'), 300);
-        }
-
-        // Función actualizada para agregar al carrito
-        function agregarAlCarrito(productoId, nombreProducto) {
+        function agregarAlCarrito(productoId, nombre) {
+            console.log('Agregando producto:', productoId);
             fetch(`/cart/agregar/${productoId}/`, {
                 method: 'GET',
                 headers: {
@@ -200,57 +61,230 @@
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Respuesta:', response);
+                return response.json();
+            })
             .then(data => {
+                console.log('Data:', data);
                 if (data.status === 'success') {
-                    // Incrementar el contador local
                     cartCount = data.num_items;
                     cartCountElement.textContent = cartCount;
-                    animateCounter();
-
-                    // Mostrar notificación
-                    const notification = document.getElementById('notification');
-                    notification.textContent = `¡${nombreProducto} agregado al carrito!`;
-                    notification.classList.remove('error');
-                    notification.classList.add('show');
-
-                    // Ocultar notificación después de 3 segundos
-                    setTimeout(() => {
-                        notification.classList.remove('show');
-                    }, 3000);
+                    showNotification('✨ ' + nombre + ' agregado al carrito');
+                } else {
+                    throw new Error(data.message || 'Error al agregar al carrito');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                const notification = document.getElementById('notification');
-                notification.textContent = 'Error al agregar el producto';
-                notification.classList.add('error', 'show');
+                showNotification('❌ Error al agregar el producto');
+            });
+        }
+
+        let cartCount = {{ num_items }};
+        const cartCountElement = document.querySelector('.cart-count');
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            requestAnimationFrame(() => {
+                notification.classList.add('show');
+                
                 setTimeout(() => {
-                    notification.classList.remove('show', 'error');
-                }, 3000);
+                    notification.classList.remove('show');
+                    setTimeout(() => notification.remove(), 300);
+                }, 2000);
             });
         }
+    </script>
 
-        // Función para actualizar el contador desde el servidor
-        function actualizarContador() {
-            fetch('/cart/', {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.num_items !== cartCount) {
-                    cartCount = data.num_items;
-                    cartCountElement.textContent = cartCount;
-                }
-            });
+    <!-- Modal de detalles -->
+    <div id="detallesModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-body">
+                <div class="modal-image">
+                    <img id="modalImage" src="" alt="Producto">
+                </div>
+                <div class="modal-info">
+                    <h2 id="modalTitle"></h2>
+                    <p class="modal-brand" id="modalBrand"></p>
+                    <p class="modal-price" id="modalPrice"></p>
+                    <div class="modal-description">
+                        <h3>Descripción:</h3>
+                        <p id="modalDescription"></p>
+                    </div>
+                    <div class="modal-use">
+                        <h3>Modo de Uso:</h3>
+                        <p id="modalUse"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+        position: relative;
+        background: rgba(17, 25, 40, 0.95);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.125);
+        width: 90%;
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 2rem;
+        animation: modalFadeIn 0.3s ease-out;
+    }
+
+    .modal-body {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 2rem;
+    }
+
+    .modal-image img {
+        width: 100%;
+        height: auto;
+        border-radius: 16px;
+        object-fit: cover;
+    }
+
+    .modal-info {
+        color: var(--sky);
+    }
+
+    .modal-info h2 {
+        font-size: 2rem;
+        color: var(--gold);
+        margin-bottom: 1rem;
+    }
+
+    .modal-brand {
+        font-size: 1.2rem;
+        color: var(--sky);
+        opacity: 0.8;
+        margin-bottom: 1rem;
+    }
+
+    .modal-price {
+        font-size: 1.5rem;
+        color: var(--gold);
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    .modal-description, .modal-use {
+        margin-bottom: 1.5rem;
+    }
+
+    .modal-description h3, .modal-use h3 {
+        color: var(--gold);
+        margin-bottom: 0.5rem;
+    }
+
+    .close-modal {
+        position: absolute;
+        right: 1.5rem;
+        top: 1.5rem;
+        font-size: 2rem;
+        color: var(--sky);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .close-modal:hover {
+        color: var(--gold);
+        transform: rotate(90deg);
+    }
+
+    .details-btn {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--sky);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+    }
+
+    .details-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+    @keyframes modalFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .modal-body {
+            grid-template-columns: 1fr;
         }
 
-        // Actualizar el contador cada 5 segundos
-        setInterval(actualizarContador, 5000);
+        .modal-content {
+            width: 95%;
+            margin: 20px auto;
+            padding: 1.5rem;
+        }
+    }
+    </style>
+
+    <script>
+    function verDetalles(nombre, descripcion, marca, precio, imagen, uso) {
+        document.getElementById('modalTitle').textContent = nombre;
+        document.getElementById('modalBrand').textContent = marca;
+        document.getElementById('modalPrice').textContent = `$ ${precio}`;
+        document.getElementById('modalDescription').textContent = descripcion;
+        document.getElementById('modalUse').textContent = uso;
+        document.getElementById('modalImage').src = imagen;
+        
+        document.getElementById('detallesModal').style.display = 'block';
+    }
+
+    // Cerrar modal
+    document.querySelector('.close-modal').addEventListener('click', function() {
+        document.getElementById('detallesModal').style.display = 'none';
+    });
+
+    // Cerrar modal al hacer clic fuera
+    window.addEventListener('click', function(event) {
+        if (event.target == document.getElementById('detallesModal')) {
+            document.getElementById('detallesModal').style.display = 'none';
+        }
+    });
+
+    // Cerrar modal con la tecla ESC
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            document.getElementById('detallesModal').style.display = 'none';
+        }
+    });
     </script>
 </body>
-
 </html>

@@ -1,0 +1,87 @@
+/* Animaciones y efectos */
+:root {
+    --x: 0.5;
+    --y: 0.5;
+}
+
+/* Efecto de brillo para botones */
+.btn-hover {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-hover::after {
+    content: '';
+    position: absolute;
+    top: calc(var(--y) * 100%);
+    left: calc(var(--x) * 100%);
+    transform: translate(-50%, -50%);
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 50%);
+    transition: width 0.5s ease, height 0.5s ease;
+}
+
+.btn-hover:hover::after {
+    width: 200px;
+    height: 200px;
+}
+
+/* Animación de entrada para productos */
+.product-item {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+/* Efecto de desvanecimiento para navegación */
+nav.nav {
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+/* Animación para imágenes lazy load */
+.fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Notificaciones toast */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    background: var(--slate-transparent);
+    color: var(--sky);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transform: translateX(120%);
+    transition: transform 0.3s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 1000;
+    border: 1px solid var(--sky-transparent);
+}
+
+.toast.show {
+    transform: translateX(0);
+}
+
+.toast-success {
+    background: rgba(46, 229, 157, 0.9);
+    border-color: var(--gold);
+}
+
+.toast-error {
+    background: rgba(255, 69, 58, 0.9);
+    border-color: #ff453a;
+} 

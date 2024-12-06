@@ -1,50 +1,229 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Productos</title>
+    <title>Catálogo - Cosméticos</title>
     <link rel="stylesheet" href="{% static 'css/styles_catalog.css' %}">
-    <style>
-        body {
-            background-image: url("{{ MEDIA_URL }}fondo/Witch.jpeg");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-    </style>
 </head>
-
 <body>
-    <header class="header">
-        <div class="wrap">
-            <button class="button"><a href="{% url 'home' %}" class="button2 b-blue rot-135">Salir</a></button>
+    <header class="catalog-header">
+        <div class="header-container">
+            <h1 class="site-title">Nuestros Productos</h1>
+            <a href="{% url 'home' %}" class="back-btn">Volver al Inicio</a>
         </div>
     </header>
 
-    <main class="main">
-        <section class="catalog-header">
-            <h2 style="color: black;">Catálogo de Productos</h2>
-        </section>
-
-        <section class="product-list">
-            {% for p in productos %}
-            <div class="product-item">
-                {% if p.imagen %}
-                <img src="{{ p.imagen.url }}" alt="{{ p.nombre }}">
-                {% endif %}
-                <h3 class="brand">{{ p.marca.nombre | capfirst }}</h3>
-                <h2 class="product-name">{{ p.nombre | title }}</h2>
-            </div>
+    <main class="catalog-container">
+        <div class="products-grid">
+            {% for producto in productos %}
+            <article class="product-card">
+                <div class="product-image">
+                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                    <div class="product-overlay">
+                        <div class="product-details">
+                            <button class="details-btn" onclick="verDetalles('{{ producto.nombre }}', '{{ producto.descripcion }}', '{{ producto.marca }}', '{{ producto.precio }}', '{{ producto.imagen.url }}', '{{ producto.uso|default:'No especificado' }}')">
+                                Ver Detalles
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <p class="product-brand">{{ producto.marca }}</p>
+                    <h3 class="product-name">{{ producto.nombre }}</h3>
+                    <p class="product-price">$ {{ producto.precio }}</p>
+                </div>
+            </article>
             {% endfor %}
-        </section>
+        </div>
     </main>
 
-    <footer class="footer">
-        <p>&copy; 2024 Tu Empresa. Todos los derechos reservados.</p>
-    </footer>
-</body>
+    <!-- Modal de detalles -->
+    <div id="detallesModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-body">
+                <div class="modal-image">
+                    <img id="modalImage" src="" alt="Producto">
+                </div>
+                <div class="modal-info">
+                    <h2 id="modalTitle"></h2>
+                    <p class="modal-brand" id="modalBrand"></p>
+                    <p class="modal-price" id="modalPrice"></p>
+                    <div class="modal-description">
+                        <h3>Descripción:</h3>
+                        <p id="modalDescription"></p>
+                    </div>
+                    <div class="modal-use">
+                        <h3>Modo de Uso:</h3>
+                        <p id="modalUse"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <style>
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+        position: relative;
+        background: rgba(17, 25, 40, 0.95);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.125);
+        width: 90%;
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 2rem;
+        animation: modalFadeIn 0.3s ease-out;
+    }
+
+    .modal-body {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 2rem;
+    }
+
+    .modal-image img {
+        width: 100%;
+        height: auto;
+        border-radius: 16px;
+        object-fit: cover;
+    }
+
+    .modal-info {
+        color: var(--sky);
+    }
+
+    .modal-info h2 {
+        font-size: 2rem;
+        color: var(--gold);
+        margin-bottom: 1rem;
+    }
+
+    .modal-brand {
+        font-size: 1.2rem;
+        color: var(--sky);
+        opacity: 0.8;
+        margin-bottom: 1rem;
+    }
+
+    .modal-price {
+        font-size: 1.5rem;
+        color: var(--gold);
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    .modal-description, .modal-use {
+        margin-bottom: 1.5rem;
+    }
+
+    .modal-description h3, .modal-use h3 {
+        color: var(--gold);
+        margin-bottom: 0.5rem;
+    }
+
+    .close-modal {
+        position: absolute;
+        right: 1.5rem;
+        top: 1.5rem;
+        font-size: 2rem;
+        color: var(--sky);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .close-modal:hover {
+        color: var(--gold);
+        transform: rotate(90deg);
+    }
+
+    .details-btn {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--sky);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+        width: 100%;
+    }
+
+    .details-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+    @keyframes modalFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .modal-body {
+            grid-template-columns: 1fr;
+        }
+
+        .modal-content {
+            width: 95%;
+            margin: 20px auto;
+            padding: 1.5rem;
+        }
+    }
+    </style>
+
+    <script>
+    function verDetalles(nombre, descripcion, marca, precio, imagen, uso) {
+        document.getElementById('modalTitle').textContent = nombre;
+        document.getElementById('modalBrand').textContent = marca;
+        document.getElementById('modalPrice').textContent = `$ ${precio}`;
+        document.getElementById('modalDescription').textContent = descripcion;
+        document.getElementById('modalUse').textContent = uso;
+        document.getElementById('modalImage').src = imagen;
+        
+        document.getElementById('detallesModal').style.display = 'block';
+    }
+
+    // Cerrar modal
+    document.querySelector('.close-modal').addEventListener('click', function() {
+        document.getElementById('detallesModal').style.display = 'none';
+    });
+
+    // Cerrar modal al hacer clic fuera
+    window.addEventListener('click', function(event) {
+        if (event.target == document.getElementById('detallesModal')) {
+            document.getElementById('detallesModal').style.display = 'none';
+        }
+    });
+
+    // Cerrar modal con la tecla ESC
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            document.getElementById('detallesModal').style.display = 'none';
+        }
+    });
+    </script>
+</body>
 </html>

@@ -4,205 +4,283 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Página de pago seguro">
     <title>Procesar Pago</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <header class="cart-header">
+        <div class="header-container">
+            <h1 class="cart-title">✨ Finalizar Compra</h1>
+            <a href="{% url 'cart' %}" class="back-btn">Volver al Carrito</a>
+        </div>
+    </header>
+
+    <main class="payment-container">
+        <div class="payment-summary">
+            <h2 class="summary-title">📋 Resumen de tu Compra</h2>
+            {% for item in items %}
+            <div class="payment-item">
+                <div class="item-info">
+                    <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.nombre }}" class="item-thumbnail">
+                    <div class="item-details">
+                        <h3>{{ item.producto.nombre }}</h3>
+                        <p>Cantidad: {{ item.cantidad }}</p>
+                    </div>
+                </div>
+                <span class="item-price">${{ item.get_total_item_price }}</span>
+            </div>
+            {% endfor %}
+            <div class="payment-subtotal">
+                <span>Subtotal</span>
+                <span>${{ total }}</span>
+            </div>
+            <div class="payment-shipping">
+                <span>Envío</span>
+                <span class="free-shipping">¡GRATIS! 🚚</span>
+            </div>
+            <div class="payment-total">
+                <strong>Total a Pagar</strong>
+                <strong>${{ total }}</strong>
+            </div>
+        </div>
+
+        <div class="payment-form">
+            <h2 class="form-title">💳 Simulación de Pago</h2>
+            <div class="payment-info">
+                <p class="info-text">🔒 Esta es una simulación segura de pago</p>
+                <p class="info-text">✨ Recibirás un comprobante al finalizar</p>
+            </div>
+            <form id="paymentForm" onsubmit="procesarPago(event)">
+                <div class="card-container">
+                    <div class="card-preview">
+                        <div class="card-front">
+                            <div class="card-type">DEMO CARD</div>
+                            <div class="card-number" id="cardNumberPreview">4242 4242 4242 4242</div>
+                            <div class="card-info">
+                                <div class="card-name" id="cardNamePreview">USUARIO DEMO</div>
+                                <div class="card-expiry" id="cardExpiryPreview">12/25</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cardNumber">Número de Tarjeta</label>
+                    <input type="text" id="cardNumber" class="demo-input" 
+                           placeholder="1234 5678 9012 3456" maxlength="19">
+                </div>
+                <div class="form-row">
+                    <div class="form-group expiry-group">
+                        <label for="expiry">Vencimiento</label>
+                        <input type="text" id="expiry" class="demo-input" 
+                               placeholder="MM/YY" maxlength="5">
+                    </div>
+                    <div class="form-group cvv-group">
+                        <label for="cvv">CVV</label>
+                        <input type="text" id="cvv" class="demo-input" 
+                               placeholder="123" maxlength="4">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="cardName">Nombre en la Tarjeta</label>
+                    <input type="text" id="cardName" class="demo-input" 
+                           placeholder="NOMBRE APELLIDO">
+                </div>
+
+                <div class="payment-benefits">
+                    <div class="benefit-item">
+                        <span class="benefit-icon">🔒</span>
+                        <span>Pago Seguro</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="benefit-icon">📄</span>
+                        <span>Comprobante Digital</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="benefit-icon">🚚</span>
+                        <span>Envío Gratis</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="payment-btn">
+                    <span class="btn-icon">✨</span>
+                    Simular Pago y Obtener Comprobante
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        function procesarPago(event) {
+            event.preventDefault();
+            
+            if (confirm('✨ ¿Confirmas realizar esta simulación de pago?')) {
+                fetch('/cart/factura/', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        if (response.headers.get('content-type') === 'application/pdf') {
+                            return response.blob().then(blob => {
+                                const url = window.URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = 'comprobante_pago.pdf';
+                                document.body.appendChild(a);
+                                a.click();
+                                window.URL.revokeObjectURL(url);
+                                a.remove();
+                                
+                                alert('✨ ¡Pago exitoso! Tu comprobante se descargará automáticamente.');
+                                window.location.href = '{% url "catalogue" %}';
+                            });
+                        }
+                        return response.json();
+                    }
+                    throw new Error('Error en el proceso de pago');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('❌ Error al procesar el pago. Por favor, intenta nuevamente.');
+                });
+            }
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+
     <style>
-        :root {
-            --primary-color: #000000;
-            --secondary-color: #2EE59D;
+        .form-row {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;  /* Más espacio para el vencimiento */
+            gap: 1.5rem;  /* Más espacio entre los campos */
         }
 
-        body {
-            background-image: url("{{ MEDIA_URL }}fondo/Witch.jpeg");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            font-family: 'Segoe UI', sans-serif;
-            color: white;
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+        .expiry-group {
+            margin-right: 1rem;  /* Espacio adicional a la derecha */
         }
 
-        .payment-container {
-            background-color: rgba(0, 0, 0, 0.8);
-            border-radius: 15px;
-            padding: 2rem;
-            max-width: 500px;
-            margin: 2rem auto;
-            backdrop-filter: blur(10px);
+        .cvv-group {
+            margin-left: 1rem;  /* Espacio adicional a la izquierda */
         }
 
-        .payment-header {
-            text-align: center;
+        .demo-input {
+            background: rgba(255,255,255,0.05) !important;
+            color: var(--text-color) !important;
+            font-family: monospace;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .demo-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(216, 163, 26, 0.2);
+        }
+
+        /* Vista previa en vivo de la tarjeta */
+        .card-preview {
             margin-bottom: 2rem;
         }
 
-        .payment-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
+        #cardNumberPreview, #cardNamePreview, #cardExpiryPreview {
+            transition: all 0.3s ease;
         }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;  /* En móvil, campos uno debajo del otro */
+                gap: 1rem;
+            }
 
-        .form-group label {
-            font-weight: bold;
-        }
-
-        .form-group input {
-            padding: 0.8rem;
-            border: none;
-            border-radius: 5px;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
-        }
-
-        .card-details {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .total-amount {
-            text-align: right;
-            font-size: 1.2rem;
-            margin: 1rem 0;
-        }
-
-        .submit-button {
-            background-color: var(--secondary-color);
-            color: black;
-            padding: 1rem;
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .submit-button:hover {
-            transform: translateY(-2px);
-        }
-
-        .back-button {
-            text-align: center;
-            margin-top: 1rem;
-        }
-
-        .back-button a {
-            color: var(--secondary-color);
-            text-decoration: none;
+            .expiry-group, .cvv-group {
+                margin: 0;  /* Eliminar márgenes en móvil */
+            }
         }
     </style>
-</head>
-<body>
-    <div class="payment-container">
-        <div class="payment-header">
-            <h1>Procesar Pago</h1>
-        </div>
-        
-        <form class="payment-form" id="payment-form">
-            {% csrf_token %}
-            
-            <div class="total-amount">
-                Total a pagar: ${{ total }}
-            </div>
-
-            <div class="form-group">
-                <label>Nombre en la tarjeta</label>
-                <input type="text" id="card-name" required>
-            </div>
-
-            <div class="form-group">
-                <label>Número de tarjeta</label>
-                <input type="text" id="card-number" pattern="\d*" maxlength="16" required>
-            </div>
-
-            <div class="card-details">
-                <div class="form-group">
-                    <label>Fecha de expiración</label>
-                    <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>CVV</label>
-                    <input type="text" id="card-cvv" pattern="\d*" maxlength="3" required>
-                </div>
-            </div>
-
-            <button type="submit" class="submit-button">Pagar y Generar Factura</button>
-        </form>
-
-        <div class="back-button">
-            <a href="{% url 'cart' %}">Volver al carrito</a>
-        </div>
-    </div>
 
     <script>
-        document.getElementById('payment-form').addEventListener('submit', function(e) {
-            e.preventDefault();
+        // Actualizar la vista previa de la tarjeta en tiempo real
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+            let value = e.target.value;
+            // Formatear con espacios cada 4 dígitos
+            value = value.replace(/\s/g, '').replace(/(.{4})/g, '$1 ').trim();
+            e.target.value = value;
+            document.getElementById('cardNumberPreview').textContent = value || '4242 4242 4242 4242';
+        });
+
+        document.getElementById('cardName').addEventListener('input', function(e) {
+            document.getElementById('cardNamePreview').textContent = e.target.value.toUpperCase() || 'USUARIO DEMO';
+        });
+
+        document.getElementById('expiry').addEventListener('input', function(e) {
+            let value = e.target.value;
+            // Formatear como MM/YY
+            if (value.length === 2 && !value.includes('/')) {
+                value += '/';
+                e.target.value = value;
+            }
+            document.getElementById('cardExpiryPreview').textContent = value || '12/25';
+        });
+
+        function procesarPago(event) {
+            event.preventDefault();
             
-            // Validar el formulario
-            const cardName = document.getElementById('card-name').value;
-            const cardNumber = document.getElementById('card-number').value;
-            const cardExpiry = document.getElementById('card-expiry').value;
-            const cardCvv = document.getElementById('card-cvv').value;
-
-            if (!cardName || !cardNumber || !cardExpiry || !cardCvv) {
-                alert('Por favor, complete todos los campos');
-                return;
+            // Permitir cualquier entrada
+            if (confirm('✨ ¿Confirmas realizar esta simulación de pago?')) {
+                fetch('/cart/factura/', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        if (response.headers.get('content-type') === 'application/pdf') {
+                            return response.blob().then(blob => {
+                                const url = window.URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = 'comprobante_pago.pdf';
+                                document.body.appendChild(a);
+                                a.click();
+                                window.URL.revokeObjectURL(url);
+                                a.remove();
+                                
+                                alert('✨ ¡Pago exitoso! Tu comprobante se descargará automáticamente.');
+                                window.location.href = '{% url "catalogue" %}';
+                            });
+                        }
+                        return response.json();
+                    }
+                    throw new Error('Error en el proceso de pago');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('❌ Error al procesar el pago. Por favor, intenta nuevamente.');
+                });
             }
-
-            // Simular procesamiento de pago
-            const formData = new FormData();
-            formData.append('card_name', cardName);
-            formData.append('card_number', cardNumber);
-            formData.append('card_expiry', cardExpiry);
-            formData.append('card_cvv', cardCvv);
-
-            fetch(window.location.href, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: formData
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Iniciar la descarga de la factura
-                    window.location.href = '{% url "generar_factura" %}';
-                    
-                    // Esperar a que comience la descarga antes de redirigir
-                    setTimeout(() => {
-                        window.location.href = '{% url "home" %}';
-                    }, 3000); // Aumentamos el tiempo de espera a 3 segundos
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Hubo un error al procesar el pago. Por favor, intente nuevamente.');
-            });
-        });
-
-        // Formatear la fecha de expiración automáticamente
-        document.getElementById('card-expiry').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length >= 2) {
-                value = value.slice(0,2) + '/' + value.slice(2);
-            }
-            e.target.value = value;
-        });
-
-        // Formatear el número de tarjeta en grupos de 4
-        document.getElementById('card-number').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            e.target.value = value;
-        });
+        }
     </script>
 </body>
 </html> 
